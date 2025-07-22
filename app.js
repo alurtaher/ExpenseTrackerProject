@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 
 const bodyParser = require("body-parser");
+const sequelize = require("./utils/database");
 
 const userRouter = require("./router/userRouter");
 
@@ -12,6 +13,9 @@ app.use(bodyParser.json());
 app.use("/", userRouter);
 app.use("/user", userRouter);
 
-app.listen(3000,()=>{
-    console.log('Server is Running on 3000')
-});
+sequelize
+  .sync()
+  .then((result) => {
+    app.listen(3000);
+  })
+  .catch((err) => console.log(err));
