@@ -67,7 +67,7 @@ const postUserLogin = (req, res, next) => {
           return res.status(200).json({
             success: true,
             message: "Login Successful!",
-            token: generateAccessToken(user.id, user.email),
+            token: generateAccessToken(user.id),
           });
         } else {
           return res.status(401).json({

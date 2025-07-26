@@ -6,65 +6,71 @@ const table = document.getElementById("tbodyId");
 const submitBtn = document.getElementById("submitBtn");
 const buyPremiumBtn = document.getElementById("buyPremiumBtn");
 
+let editingId = null; // Track edit mode
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const category = categoryInput.value;
-  const description = descriptionInput.value;
-  const amount = amountInput.value;
+
+  const category = categoryInput.value.trim();
+  const description = descriptionInput.value.trim();
+  const amount = amountInput.value.trim();
   const token = localStorage.getItem("token");
 
-  if (!category || !description || !amount)
+  if (!category || !description || !amount) {
     return alert("Please fill all fields");
+  }
 
   const now = new Date();
-  const date = `${now.getDate().toString().padStart(2, "0")}-${(
-    now.getMonth() + 1
-  )
+  const date = `${now.getDate().toString().padStart(2, "0")}-${(now.getMonth() + 1)
     .toString()
     .padStart(2, "0")}-${now.getFullYear()}`;
 
   try {
-    await axios.post(
-      "http://localhost:3000/expense/addExpense",
-      {
-        date,
-        category,
-        description,
-        amount,
-      },
-      {
-        headers: { Authorization: token },
-      }
-    );
-    window.location.reload();
+    if (editingId) {
+      await axios.post(
+        `http://localhost:3000/expense/editExpense/${editingId}`,
+        { category, description, amount },
+        { headers: { Authorization: token } }
+      );
+      editingId = null;
+      submitBtn.textContent = "Add Expense";
+    } else {
+      await axios.post(
+        "http://localhost:3000/expense/addExpense",
+        { date, category, description, amount },
+        { headers: { Authorization: token } }
+      );
+    }
+
+    resetForm();
+    refreshApp();
   } catch (err) {
     console.error(err);
+    alert("Something went wrong. Please try again.");
   }
 });
 
 async function getAllExpenses() {
   const token = localStorage.getItem("token");
+  table.innerHTML = ""; // Clear old data
   try {
-    const res = await axios.get(
-      "http://localhost:3000/expense/getAllExpenses",
-      {
-        headers: { Authorization: token },
-      }
-    );
+    const res = await axios.get("http://localhost:3000/expense/getAllExpenses", {
+      headers: { Authorization: token },
+    });
 
     res.data.forEach((exp) => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
-            <td>${exp.date}</td>
-            <td>${exp.category}</td>
-            <td>${exp.description}</td>
-            <td>₹${exp.amount}</td>
-            <td>
-              <button class="btn btn-sm btn-danger delete">Delete</button>
-              <button class="btn btn-sm btn-secondary edit">Edit</button>
-              <input type="hidden" value="${exp.id}">
-            </td>
-          `;
+        <td>${exp.date}</td>
+        <td>${exp.category}</td>
+        <td>${exp.description}</td>
+        <td>₹${exp.amount}</td>
+        <td>
+          <button class="btn btn-sm btn-danger delete">Delete</button>
+          <button class="btn btn-sm btn-secondary edit">Edit</button>
+          <input type="hidden" value="${exp.id}">
+        </td>
+      `;
       table.appendChild(tr);
     });
   } catch (err) {
@@ -78,11 +84,16 @@ table.addEventListener("click", async (e) => {
   const token = localStorage.getItem("token");
 
   if (e.target.classList.contains("delete")) {
-    if (confirm("Are you sure?")) {
-      await axios.get(`http://localhost:3000/expense/deleteExpense/${id}`, {
-        headers: { Authorization: token },
-      });
-      window.location.reload();
+    if (confirm("Are you sure you want to delete this expense?")) {
+      try {
+        await axios.delete(`http://localhost:3000/expense/deleteExpense/${id}`, {
+          headers: { Authorization: token },
+        });
+        refreshApp();
+      } catch (err) {
+        console.error(err);
+        alert("Failed to delete expense.");
+      }
     }
   }
 
@@ -91,41 +102,17 @@ table.addEventListener("click", async (e) => {
     descriptionInput.value = row.children[2].textContent;
     amountInput.value = row.children[3].textContent.replace("₹", "");
 
-    submitBtn.textContent = "Update";
-    const newBtn = submitBtn.cloneNode(true);
-    submitBtn.parentNode.replaceChild(newBtn, submitBtn);
-
-    newBtn.addEventListener(
-      "click",
-      async (event) => {
-        event.preventDefault();
-        await axios.post(
-          `http://localhost:3000/expense/editExpense/${id}`,
-          {
-            category: categoryInput.value,
-            description: descriptionInput.value,
-            amount: amountInput.value,
-          },
-          {
-            headers: { Authorization: token },
-          }
-        );
-        window.location.reload();
-      },
-      { once: true }
-    );
+    editingId = id;
+    submitBtn.textContent = "Update Expense";
   }
 });
 
 async function buyPremium() {
   const token = localStorage.getItem("token");
   try {
-    const res = await axios.get(
-      "http://localhost:3000/purchase/premiumMembership",
-      {
-        headers: { Authorization: token },
-      }
-    );
+    const res = await axios.get("http://localhost:3000/purchase/premiumMembership", {
+      headers: { Authorization: token },
+    });
 
     if (res.data.isPremium) {
       return alert(res.data.message);
@@ -141,16 +128,15 @@ async function buyPremium() {
       const confirmRes = await axios.post(
         `http://localhost:3000/purchase/updateTransactionStatus/${orderId}`,
         {},
-        {
-          headers: { Authorization: token },
-        }
+        { headers: { Authorization: token } }
       );
+
       alert("Payment successful! You are now a premium member.");
-      localStorage.setItem("token", confirmRes.data.token);
-      window.location.reload();
+      refreshApp();
     }
   } catch (err) {
     console.error(err);
+    alert("Payment failed or was cancelled.");
   }
 }
 
@@ -175,9 +161,22 @@ function logout() {
   window.location.href = "/";
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+function resetForm() {
+  categoryInput.value = "";
+  descriptionInput.value = "";
+  amountInput.value = "";
+}
+
+function refreshApp() {
   getAllExpenses();
   checkPremiumStatus();
+  resetForm();
+  editingId = null;
+  submitBtn.textContent = "Add Expense";
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  refreshApp();
 });
 
 buyPremiumBtn.addEventListener("click", buyPremium);

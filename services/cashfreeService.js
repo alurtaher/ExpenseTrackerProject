@@ -61,11 +61,11 @@ exports.getPaymentStatus = async (orderId) => {
     const response = await cashfree.PGOrderFetchPayments(orderId.toString());
     const transactions = response.data;
 
-    let status = "Failure";
+    let status = "FAILED";
     if (transactions.some((txn) => txn.payment_status === "SUCCESS")) {
-      status = "Success";
+      status = "SUCCESS";
     } else if (transactions.some((txn) => txn.payment_status === "PENDING")) {
-      status = "Pending";
+      status = "PENDING";
     }
 
     return status;

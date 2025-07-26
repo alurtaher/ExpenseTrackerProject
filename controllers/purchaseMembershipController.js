@@ -1,7 +1,7 @@
 const cashfreeService = require("../services/cashfreeService");
 const Order = require("../models/ordersModel");
 const userController = require("./userController");
-const user = require('../models/userModel')
+const user = require("../models/userModel");
 
 exports.purchasePremium = async (req, res) => {
   try {
@@ -38,13 +38,18 @@ exports.purchasePremium = async (req, res) => {
     // ❗ Start timeout countdown: auto-fail after 5 minutes if status is still pending
     setTimeout(async () => {
       try {
-        const currentOrder = await Order.findOne({ where: { orderid: orderId } });
+        const currentOrder = await Order.findOne({
+          where: { orderid: orderId },
+        });
         if (currentOrder && currentOrder.status === "PENDING") {
           await currentOrder.update({ status: "FAILED" });
           console.log(`Order ${orderId} marked as FAILED after 5 minutes`);
         }
       } catch (timeoutErr) {
-        console.error("Failed to update order status after timeout:", timeoutErr);
+        console.error(
+          "Failed to update order status after timeout:",
+          timeoutErr
+        );
       }
     }, 5 * 60 * 1000); // 5 minutes in milliseconds
 
@@ -64,29 +69,37 @@ exports.purchasePremium = async (req, res) => {
   }
 };
 
-
-exports.updateTransactionStatus = async(req,res)=>{
-    try {
-        const orderId = req.params.orderId;
+exports.updateTransactionStatus = async (req, res) => {
+  try {
+    const orderId = req.params.orderId;
     const status = await cashfreeService.getPaymentStatus(orderId);
 
     // Update Order table based on result
     const order = await Order.findOne({ where: { orderid: orderId } });
     if (order) {
       await order.update({ status });
-      if (status === "Success") {
+      if (status === "SUCCESS") {
         // Make user premium
         const user = await order.getUser();
-        console.log("User is "+ user)
+        console.log("User is " + user);
         user.isPremiumUser = true;
         await user.save();
       }
     }
-    return res.json({status})
-    } catch (error) {
-        console.error("Error fetching payment status:", error);
-        await Order.update({ status: "FAILED" }, { where: { orderid: req.params.orderId } });
+    return res.json({
+      status:status,
+      success: true,
+      message: "Transaction successful"
+    });
+  } catch (error) {
+    console.error("Error fetching payment status:", error);
+    await Order.update(
+      { status: "FAILED" },
+      { where: { orderid: req.params.orderId } }
+    );
 
-        return res.status(500).json({ message: "Error fetching payment status", status: "Failed" });
-    }
-}
+    return res
+      .status(500)
+      .json({ message: "Error fetching payment status", status: "Failed" });
+  }
+};
