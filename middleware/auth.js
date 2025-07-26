@@ -4,9 +4,10 @@ const User = require("../models/userModel");
 const authenticate = (req, res, next) => {
   try {
     const token = req.header("Authorization");
+    console.log("Received token:", token);
     const user = jwt.verify(
       token,
-      "kjhsgdfiuiew889kbasgdfskjabsdfjlabsbdljhsd"
+      "secret"
     );
     User.findByPk(user.userId).then((user) => {
       req.user = user;

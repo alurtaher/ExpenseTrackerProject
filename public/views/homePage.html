@@ -1,243 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Home Page</title>
 
-    
-    <!-- ----------------------------------------------------------------------------- -->
-    <!-- css -->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expense Tracker</title>
 
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
-      crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="/css/homePage.css" />
-  </head>
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-  <body>
+  <!-- Internal CSS -->
+  <link rel="stylesheet" href="../css/homePage.css">
+</head>
 
-
-    <!--------------------------------------------------------------------------------- -->
-    <!-- Nav Bar -->
-
-    <nav class="navbar navbar-expand-lg navbar-dark" id="navigation">
-      <div class="container-fluid">
-        <a href="/homePage">
-          <img src="/views/euro.png" width="30px" height="30px" id="png"/>
-        </a>
-        <a class="navbar-brand" href="/homePage">Expense Tracker</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark" id="navigation">
+    <div class="container">
+      <a class="navbar-brand" href="#">Expense Tracker</a>
+      <div class="d-flex gap-2">
+        <button id="leaderboardBtn" class="btn btn-light">
+          <i class="fas fa-crown me-1"></i> Leaderboard
         </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/homePage">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#"
-                >Reports &#128081</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#"
-                >LeaderBoard &#128081</a
-              >
-            </li>
-          </ul>
-          <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-            <button
-              class="topBtn btn py-1"
-              type="button"
-              data-bs-toggle="tooltip"
-              data-bs-placement="left"
-              title="Premium Membership inclues LeaderBoard & Daily, Monthly & Yearly Reports"
-            >
-              Buy Premium &#128081
-            </button>
-            <button class="topBtn btn py-1" type="button">Log out</button>
-          </div>
-        </div>
-      </div>
-    </nav>
-
-
-
-    
-    <!-- --------------------------------------------------------------------------------- -->
-    <!-- Add Expense Form-->
-
-
-    <form
-      id="form1"
-      class="d-flex p-2"
-      onsubmit="return false;"
-    >
-      <div class="input-group mb-3 d-flex m-4" id="category">
-        <button
-          class="btn btn-outline-secondary dropdown-toggle"
-          type="button"
-          name="category"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-          id="categoryBtn"
-        >
-          Select Category
+        <button id="buyPremiumBtn" class="btn">
+          <i class="fas fa-crown me-1"></i> Buy Premium
         </button>
-        <ul
-          class="dropdown-menu"
-          id="categoryMenu"
-          aria-labelledby="categoryBtn"
-        >
-          <li class="dropdown-item" data-value="Mobile & Computers">
-            Mobile & Computers
-          </li>
-          <li class="dropdown-item" data-value="Fashion & Beauty">
-            Fashion & Beauty
-          </li>
-          <li class="dropdown-item" data-value="Groceries & Pet Supplies">
-            Groceries & Pet Supplies
-          </li>
-          <li class="dropdown-item" data-value="Home, Furniture & Appliances">
-            Home, Furniture & Appliances
-          </li>
-          <li class="dropdown-item" data-value="Music, Video & Gaming">
-            Music, Video & Gaming
-          </li>
-          <li class="dropdown-item" data-value="Books & Education">
-            Books & Education
-          </li>
-          <li class="dropdown-item" data-value="Toys, Children & Baby">
-            Toys, Children & Baby
-          </li>
-          <li class="dropdown-item" data-value="Payments & Bookings">
-            Payments & Bookings
-          </li>
-          <li class="dropdown-item" data-value="Automotive">Automotive</li>
-          <li class="dropdown-item" data-value="Office & Professional">
-            Office & Professional
-          </li>
-          <li class="dropdown-item" data-value="Sports, Outdoor & Travel">
-            Sports, Outdoor & Travel
-          </li>
-          <li class="dropdown-item" data-value="Gifting">Gifting</li>
-          <li class="dropdown-item" data-value="Bills & EMI's">
-            Bills & EMI's
-          </li>
-          <li class="dropdown-item" data-value="Others">Others</li>
-        </ul>
-        <input
-          type="hidden"
-          name="category"
-          value="default_value"
-          id="categoryInput"
-        />
-      </div>
-
-      <!--******************************************************************* -->
-      <!-- Decsiption -->
-      <div class="input-group mb-3 d-flex m-4" id="description">
-        <span class="input-group-text" id="inputGroup-sizing-default"
-          >Description</span
-        >
-        <input
-          type="text"
-          id="descriptionValue"
-          name="description"
-          class="form-control"
-          aria-label="Sizing example input"
-          aria-describedby="inputGroup-sizing-default"
-        />
-      </div>
-
-      <!--  ****************************************************************** -->
-      <!-- Amount -->
-
-      <div class="input-group mb-3 d-flex m-4" id="amount">
-        <span class="input-group-text">Amount</span>
-        <span class="input-group-text"> &#8377;</span>
-        <input
-          type="text"
-          name="amount"
-          class="form-control"
-          aria-label="Dollar amount (with dot and two decimal places)"
-          id="amountValue"
-        />
-      </div>
-
-      <!--     ********************************************************************************* -->
-      <!-- Add Expense Btn-->
-      <div class="mb-3 d-flex m-4" id="submit">
-        <button type="submit" class="btn btn-success" id="submitBtn">
-          Add Expense
+        <button class="btn btn-light" onclick="logout()">
+          <i class="fas fa-sign-out-alt me-1"></i> Logout
         </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Form -->
+  <div class="container" id="formContainer">
+    <form id="form1" class="row g-3">
+      <div class="col-md-4">
+        <select class="form-select" id="categoryBtn">
+          <option selected disabled>Select Category</option>
+          <option>Food</option>
+          <option>Travel</option>
+          <option>Groceries</option>
+          <option>Entertainment</option>
+          <option>Rent</option>
+          <option>Utilities</option>
+          <option>Internet</option>
+          <option>Mobile Recharge</option>
+          <option>Shopping</option>
+          <option>Fuel</option>
+          <option>Health</option>
+          <option>Insurance</option>
+          <option>Education</option>
+          <option>EMI</option>
+          <option>Subscriptions</option>
+          <option>Gym</option>
+          <option>Donations</option>
+          <option>Personal Care</option>
+          <option>Miscellaneous</option>
+          <option>Investments</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" placeholder="Description" id="descriptionValue" />
+      </div>
+      <div class="col-md-4">
+        <input type="number" class="form-control" placeholder="Amount" id="amountValue" />
+      </div>
+      <div class="col-md-12 text-end">
+        <button type="submit" class="btn" id="submitBtn">Add Expense</button>
       </div>
     </form>
+  </div>
 
-    <!-- --------------------------------------------------------------------------------- -->
-    <!-- Table -->
+  <!-- Table -->
+  <div class="container mt-4">
+    <h4>Recent Expenses</h4>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Category</th>
+          <th>Description</th>
+          <th>Amount</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tbodyId"></tbody>
+    </table>
+  </div>
 
-    <div class="container mt-4 p-3 " id="table">
-      <table id="example" class="table table-hover" style="width:100%">
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 Expense Tracker | All Rights Reserved</p>
+  </footer>
 
-        <!-- ------------------------------------------------------------------------- -->
-        <!-- table head -->
-        <thead id="tableHead">
-          <tr>
-            <th scope="col" class="rounded-start">Date</th>
-            <th scope="col">Category</th>
-            <th scope="col">Description</th>
-            <th scope="col">Amount</th>
-            <th scope="col" class="rounded-end"></th>
-          </tr>
-        </thead>
+  <!-- JS Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.2/axios.min.js"></script>
+  <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
 
-        <!-- ------------------------------------------------------------------------- -->
-          <!-- table body -->
+  <!-- Replace with your logic -->
+  <script>
+    function logout() {
+      localStorage.clear();
+      window.location.href = '/login';
+    }
+  </script>
+  <script src="../js/homePage.js"></script>
+</body>
 
-        <tbody id="tbodyId">
-          <!-- <tr class="trStyle">
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-            <td>
-              <button class="editDelete btn btn-danger">Delete</button>
-              <button class="editDelete btn btn-secondary">Edit</button>
-            </td>
-          </tr> -->
-        </tbody>
-      </table>
-    </div>
-
-
-
-    <!-- ---------------------------------------------------------------------------------- -->
-    <!-- scripts -->
-    
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.2/axios.min.js"
-      integrity="sha512-QTnb9BQkG4fBYIt9JGvYmxPpd6TBeKp6lsUrtiVQsrJ9sb33Bn9s0wMQO9qVBFbPX3xHRAsBHvXlcsrnJjExjg=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-      ></script>
-    <script src="/js/homePage.js"></script>
-  </body>
 </html>

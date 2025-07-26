@@ -26,7 +26,7 @@ exports.addExpense = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
-exports.getAllExpenses = (req, res, next) => {
+exports.getAllExpenses = (req, res) => {
   Expense.findAll({ where: { userId: req.user.id } })
     .then((expenses) => {
       res.json(expenses);
@@ -49,6 +49,7 @@ exports.deleteExpense = (req, res, next) => {
 exports.editExpense = (req, res, next) => {
   const category = req.body.category;
   const description = req.body.description;
+  const id = req.params.id;
   const amount = req.body.amount;
   Expense.update(
     {

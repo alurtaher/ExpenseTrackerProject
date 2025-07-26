@@ -6,9 +6,11 @@ const sequelize = require("./utils/database");
 
 const userRouter = require("./router/userRouter");
 const expenseRouter = require("./router/expenseRouter");
+const purchaseMembershipRouter = require("./router/purchaseMembershipRouter");
 
 const User = require("./models/userModel");
 const Expense = require("./models/expenseModel");
+const Order = require("./models/ordersModel");
 
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -19,12 +21,16 @@ app.use("/user", userRouter);
 
 app.use("/homePage", expenseRouter);
 app.use("/expense", expenseRouter);
+app.use("/purchase", purchaseMembershipRouter);
 
 User.hasMany(Expense);
 Expense.belongsTo(User);
 
+User.hasMany(Order);
+Order.belongsTo(User);
+
 sequelize
-  .sync()
+  .sync({alter:true})
   .then((result) => {
     app.listen(3000);
   })
