@@ -5,6 +5,7 @@ const amountInput = document.getElementById("amountValue");
 const table = document.getElementById("tbodyId");
 const submitBtn = document.getElementById("submitBtn");
 const buyPremiumBtn = document.getElementById("buyPremiumBtn");
+const leaderboardLink = document.getElementById("leaderboardLink");
 
 let editingId = null; // Track edit mode
 
@@ -21,7 +22,9 @@ form.addEventListener("submit", async (e) => {
   }
 
   const now = new Date();
-  const date = `${now.getDate().toString().padStart(2, "0")}-${(now.getMonth() + 1)
+  const date = `${now.getDate().toString().padStart(2, "0")}-${(
+    now.getMonth() + 1
+  )
     .toString()
     .padStart(2, "0")}-${now.getFullYear()}`;
 
@@ -54,9 +57,12 @@ async function getAllExpenses() {
   const token = localStorage.getItem("token");
   table.innerHTML = ""; // Clear old data
   try {
-    const res = await axios.get("http://localhost:3000/expense/getAllExpenses", {
-      headers: { Authorization: token },
-    });
+    const res = await axios.get(
+      "http://localhost:3000/expense/getAllExpenses",
+      {
+        headers: { Authorization: token },
+      }
+    );
 
     res.data.forEach((exp) => {
       const tr = document.createElement("tr");
@@ -86,9 +92,12 @@ table.addEventListener("click", async (e) => {
   if (e.target.classList.contains("delete")) {
     if (confirm("Are you sure you want to delete this expense?")) {
       try {
-        await axios.delete(`http://localhost:3000/expense/deleteExpense/${id}`, {
-          headers: { Authorization: token },
-        });
+        await axios.delete(
+          `http://localhost:3000/expense/deleteExpense/${id}`,
+          {
+            headers: { Authorization: token },
+          }
+        );
         refreshApp();
       } catch (err) {
         console.error(err);
@@ -110,9 +119,12 @@ table.addEventListener("click", async (e) => {
 async function buyPremium() {
   const token = localStorage.getItem("token");
   try {
-    const res = await axios.get("http://localhost:3000/purchase/premiumMembership", {
-      headers: { Authorization: token },
-    });
+    const res = await axios.get(
+      "http://localhost:3000/purchase/premiumMembership",
+      {
+        headers: { Authorization: token },
+      }
+    );
 
     if (res.data.isPremium) {
       return alert(res.data.message);
@@ -133,6 +145,7 @@ async function buyPremium() {
 
       alert("Payment successful! You are now a premium member.");
       refreshApp();
+      window.location.reload();
     }
   } catch (err) {
     console.error(err);
@@ -150,9 +163,13 @@ async function checkPremiumStatus() {
     if (res.data.isPremiumUser) {
       buyPremiumBtn.innerHTML = "👑 Premium Member";
       buyPremiumBtn.disabled = true;
+      //reportsLink.removeAttribute("onclick");
+      //leaderboardLink.removeAttribute("onclick");
+      //leaderboardLink.setAttribute("href", "/premium/getLeaderboardPage");
+      buyPremiumBtn.removeEventListener("click", buyPremium);
     }
   } catch (err) {
-    console.error(err);
+    console.log(err);
   }
 }
 
@@ -179,4 +196,21 @@ document.addEventListener("DOMContentLoaded", () => {
   refreshApp();
 });
 
+async function leaderboard() {
+  const token = localStorage.getItem("token");
+  try {
+    const res = await axios.get("/user/isPremiumUser", {
+      headers: { Authorization: token },
+    });
+    if (res.data.isPremiumUser) {
+      window.location.href = `/premium/getLeaderboardPage?token=${token}`;
+    } else {
+      alert("Access Denied: Not a Premium User");
+    }
+  } catch (err) {
+    alert("Access Denied: Only Premium Users allowed");
+  }
+}
+
 buyPremiumBtn.addEventListener("click", buyPremium);
+leaderboardLink.addEventListener("click", leaderboard);

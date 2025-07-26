@@ -13,6 +13,8 @@ function generateAccessToken(id, email) {
 const isPremiumUser = (req, res, next) => {
   if (req.user.isPremiumUser) {
     return res.json({ isPremiumUser: true });
+  }else{
+    return res.json({isPremiumUser :false})
   }
 };
 
