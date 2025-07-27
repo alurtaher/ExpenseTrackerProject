@@ -1,69 +1,103 @@
 const path = require("path");
 const Expense = require("../models/expenseModel");
 const User = require("../models/userModel");
+const sequelize = require("../utils/database");
 
 exports.getHomePage = (req, res, next) => {
   res.sendFile(path.join(__dirname, "../", "public", "views", "homePage.html"));
 };
 
 exports.addExpense = async (req, res, next) => {
+  let t;
   try {
     const { date, category, description, amount } = req.body;
     const userId = req.user.id;
+    t = await sequelize.transaction();
 
-    const createdExpense = await Expense.create({
-      date,
-      category,
-      description,
-      amount,
-      userId,
-    });
+    const createdExpense = await Expense.create(
+      {
+        date,
+        category,
+        description,
+        amount,
+        userId,
+      },
+      { transaction: t }
+    );
 
     await User.increment("totalExpenses", {
       by: parseFloat(amount),
       where: { id: userId },
+      transaction: t,
     });
-
+    await t.commit();
     res.status(200).redirect("/homePage");
   } catch (err) {
+    await t.rollback();
     console.error("Error adding expense:", err);
     res.status(500).json({ message: "Failed to add expense" });
   }
 };
 
-exports.getAllExpenses = (req, res) => {
-  Expense.findAll({ where: { userId: req.user.id } })
-    .then((expenses) => {
-      res.json(expenses);
-    })
-    .catch((err) => {
-      console.log(err);
+exports.getAllExpenses = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const expenses = await Expense.findAll({
+      where: { userId },
+      order: [["createdAt", "DESC"]], // show latest first
+      // limit: 10, // For future pagination
+      // offset: 0
     });
+
+    return res.status(200).json(expenses);
+  } catch (error) {
+    console.error("Error fetching expenses:", error);
+    return res.status(500).json({ message: "Error in fetching expenses" });
+  }
 };
 
 exports.deleteExpense = async (req, res, next) => {
   const expenseId = req.params.id;
   const userId = req.user.id;
+  let t;
 
   try {
-    const expense = await Expense.findOne({ where: { id: expenseId, userId } });
-    console.log("Expense ID is "+expenseId," UserId is "+userId);
+    t = await sequelize.transaction();
+
+    const expense = await Expense.findOne(
+      { where: { id: expenseId, userId } },
+      { transaction: t }
+    );
+
+    console.log("Expense ID is " + expenseId, " UserId is " + userId);
 
     if (!expense) {
-      return res.status(404).json({ message: "Expense not found or unauthorized" });
+      await t.rollback();
+      return res
+        .status(404)
+        .json({ message: "Expense not found or unauthorized" });
     }
 
     const amountToDeduct = parseFloat(expense.amount);
 
-    await Expense.destroy({ where: { id: expenseId, userId } });
+    // Delete expense with transaction
+    await Expense.destroy(
+      { where: { id: expenseId, userId } },
+      { transaction: t }
+    );
 
+    // Decrement user totalExpenses with transaction
     await User.decrement("totalExpenses", {
       by: amountToDeduct,
       where: { id: userId },
+      transaction: t,
     });
 
-    res.status(200).json({message:"Deleted Successfully"});
+    await t.commit(); //  Commit after both operations succeed
+    res.status(200).json({ message: "Deleted Successfully" });
   } catch (err) {
+    if (t) await t.rollback(); // Rollback on error
     console.error("Error deleting expense:", err);
     res.status(500).json({ message: "Failed to delete expense" });
   }
@@ -74,12 +108,22 @@ exports.editExpense = async (req, res) => {
   const expenseId = req.params.id;
   const userId = req.user.id;
 
+  let t;
+
   try {
-    // Step 1: Get the old expense (to know the previous amount)
-    const oldExpense = await Expense.findOne({ where: { id: expenseId, userId } });
+    t = await sequelize.transaction();
+
+    // Step 1: Get the old expense (to calculate difference)
+    const oldExpense = await Expense.findOne(
+      { where: { id: expenseId, userId } },
+      { transaction: t }
+    );
 
     if (!oldExpense) {
-      return res.status(404).json({ message: "Expense not found or unauthorized" });
+      await t.rollback();
+      return res
+        .status(404)
+        .json({ message: "Expense not found or unauthorized" });
     }
 
     const oldAmount = parseFloat(oldExpense.amount);
@@ -89,19 +133,22 @@ exports.editExpense = async (req, res) => {
     // Step 2: Update the expense
     await Expense.update(
       { category, description, amount: newAmount },
-      { where: { id: expenseId, userId } }
+      { where: { id: expenseId, userId }, transaction: t }
     );
 
-    // Step 3: Adjust the totalExpenses by the difference
+    // Step 3: Adjust totalExpenses if amount changed
     if (difference !== 0) {
       await User.increment("totalExpenses", {
         by: difference,
         where: { id: userId },
+        transaction: t,
       });
     }
 
-    res.redirect("/homePage");
+    await t.commit();
+    res.status(200).json({ message: "Edited Successfully" });
   } catch (err) {
+    if (t) await t.rollback();
     console.error("Error updating expense:", err);
     res.status(500).json({ message: "Failed to update expense" });
   }

@@ -66,3 +66,25 @@ body {
   text-align: center;
   margin-top: auto;
 }
+
+@media (max-width: 576px) {
+  #formContainer {
+    padding: 1rem;
+  }
+
+  #submitBtn,
+  .navbar .btn {
+    width: 100%;
+  }
+
+  .navbar .d-flex {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+.table td,
+.table th {
+  vertical-align: middle;
+  white-space: nowrap;
+}
