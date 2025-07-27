@@ -19,7 +19,7 @@ async function getLeaderboard() {
     let name = user.name;
     let amount = user.amount;
 
-    console.log(name, amount);
+    // console.log(name, amount);
     let tr = document.createElement("tr");
     tr.setAttribute("class", "trStyle");
 

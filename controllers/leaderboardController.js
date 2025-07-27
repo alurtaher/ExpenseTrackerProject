@@ -9,27 +9,21 @@ exports.getLeaderboardPage = (req, res, next) => {
   );
 };
 
-exports.getLeaderboard = (req, res, next) => {
-  Expense.findAll({
-    attributes: [
-      [sequelize.fn("sum", sequelize.col("amount")), "totalExpense"],
-      [sequelize.col("user.name"), "name"],
-    ],
-    group: ["userId"],
-    include: [
-      {
-        model: User,
-        attributes: [],
-      },
-    ],
-    order: [[sequelize.fn("sum", sequelize.col("amount")), "DESC"]],
-  })
-    .then((expenses) => {
-      const result = expenses.map((expense) => ({
-        name: expense.getDataValue("name"),
-        amount: expense.getDataValue("totalExpense"),
-      }));
-      res.send(JSON.stringify(result));
-    })
-    .catch((err) => console.log(err));
+exports.getLeaderboard = async(req, res) => {
+  try {
+    const users = await User.findAll({
+      attributes: ["name", "totalExpenses"],
+      order: [["totalExpenses", "DESC"]],
+    });
+
+    const result = users.map(user => ({
+      name: user.name,
+      amount: user.totalExpenses,
+    }));
+
+    res.json(result); // sends JSON response
+  } catch (err) {
+    console.error("Error fetching leaderboard:", err);
+    res.status(500).json({ message: "Server Error" });
+  }  
 };
