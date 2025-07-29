@@ -6,6 +6,7 @@ const table = document.getElementById("tbodyId");
 const submitBtn = document.getElementById("submitBtn");
 const buyPremiumBtn = document.getElementById("buyPremiumBtn");
 const leaderboardLink = document.getElementById("leaderboardLink");
+const reportsLink = document.getElementById("reportsLinkBtn");
 
 let editingId = null;
 let token = localStorage.getItem("token");
@@ -192,7 +193,23 @@ async function leaderboard() {
   }
 }
 
+async function report() {
+  try {
+    const res = await axios.get('/reports/getReportsPage',{
+      headers: { Authorization: token }
+    })
+    if (res.data.isPremiumUser) {
+      window.location.href = `/premium/getLeaderboardPage?token=${token}`;
+    } else {
+      alert("Access Denied: Not a Premium User");
+    }
+  } catch (error) {
+    alert("Access Denied: Only Premium Users allowed");
+  }
+}
+
 // Event bindings
 document.addEventListener("DOMContentLoaded", refreshApp);
 buyPremiumBtn.addEventListener("click", buyPremium);
 leaderboardLink.addEventListener("click", leaderboard);
+reportsLink.addEventListener("click",report)
