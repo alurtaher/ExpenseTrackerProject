@@ -2,6 +2,8 @@ const categoryItems = document.querySelectorAll(".dropdown-item");
 const categoryInput = document.querySelector("#categoryInput");
 const categoryBtn = document.querySelector("#categoryBtn");
 const tbody = document.getElementById("tbodyId");
+const reportsBtn = document.getElementById("reportsBtn")
+const token = localStorage.getItem("token")
 
 categoryItems.forEach((item) => {
   item.addEventListener("click", (e) => {

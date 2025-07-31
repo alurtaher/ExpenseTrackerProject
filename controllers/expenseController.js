@@ -57,6 +57,26 @@ exports.getAllExpenses = async (req, res) => {
   }
 };
 
+exports.getAllExpensesforPagination = async (req, res) => {
+  try {
+    const pageNo = req.params.page;
+    const limit = 10;
+    const offset = (pageNo - 1) * limit;
+    const totalExpenses = await Expense.count({
+      where: { userId: req.user.id },
+    });
+    const totalPages = Math.ceil(totalExpenses / limit);
+    const expenses = await Expense.findAll({
+      where: { userId: req.user.id },
+      offset: offset,
+      limit: limit,
+    });
+    res.json({ expenses: expenses, totalPages: totalPages });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 exports.deleteExpense = async (req, res, next) => {
   const expenseId = req.params.id;
   const userId = req.user.id;

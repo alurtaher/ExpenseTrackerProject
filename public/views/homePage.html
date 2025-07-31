@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,10 +17,11 @@
 
   <link rel="stylesheet" href="../css/homePage.css">
 </head>
+
 <body>
 
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark" id="navigation">
+  <!-- <nav class="navbar navbar-expand-lg navbar-dark" id="navigation">
         <div class="container-fluid">
             <a href="/homePage">
                 <img src="../views/euro.png" width="30px" height="30px" id="png" />
@@ -47,6 +49,42 @@
         </div>
       </div>
     </div>
+  </nav> -->
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark" id="navigation">
+    <div class="container-fluid">
+      <a href="/homePage">
+        <img src="../views/euro.png" width="30px" height="30px" id="png" />
+      </a>
+      <a class="navbar-brand" href="/homePage">Expense Tracker</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-between" id="navbarContent">
+        <!-- Left Side -->
+        <div class="d-flex gap-2">
+          <button id="leaderboardLink" class="btn btn-success">
+            <i class="fas fa-crown me-1"></i> Leaderboard
+          </button>
+          <button id="reportsLinkBtn" class="btn btn-success">
+            <i class="fas fa-chart-line me-1"></i> Reports
+          </button>
+        </div>
+
+        <!-- Right Side -->
+        <div class="d-flex gap-2">
+          <button id="buyPremiumBtn" class="btn btn-light">
+            <i class="fas fa-gem me-1"></i> Buy Premium
+          </button>
+          <button class="btn btn-danger" onclick="logout()">
+            <i class="fas fa-sign-out-alt me-1"></i> Logout
+          </button>
+        </div>
+      </div>
+    </div>
   </nav>
 
   <!-- Form -->
@@ -55,13 +93,26 @@
       <div class="col-12 col-md-4">
         <select class="form-select" id="categoryBtn">
           <option selected disabled>Select Category</option>
-          <option>Food</option><option>Travel</option><option>Groceries</option>
-          <option>Entertainment</option><option>Rent</option><option>Utilities</option>
-          <option>Internet</option><option>Mobile Recharge</option><option>Shopping</option>
-          <option>Fuel</option><option>Health</option><option>Insurance</option>
-          <option>Education</option><option>EMI</option><option>Subscriptions</option>
-          <option>Gym</option><option>Donations</option><option>Personal Care</option>
-          <option>Miscellaneous</option><option>Investments</option>
+          <option>Food</option>
+          <option>Travel</option>
+          <option>Groceries</option>
+          <option>Entertainment</option>
+          <option>Rent</option>
+          <option>Utilities</option>
+          <option>Internet</option>
+          <option>Mobile Recharge</option>
+          <option>Shopping</option>
+          <option>Fuel</option>
+          <option>Health</option>
+          <option>Insurance</option>
+          <option>Education</option>
+          <option>EMI</option>
+          <option>Subscriptions</option>
+          <option>Gym</option>
+          <option>Donations</option>
+          <option>Personal Care</option>
+          <option>Miscellaneous</option>
+          <option>Investments</option>
         </select>
       </div>
       <div class="col-12 col-md-4">
@@ -95,14 +146,23 @@
     </div>
   </div>
 
+  <nav aria-label="Page navigation example">
+    <ul id="paginationUL" class="pagination justify-content-md-end">
+      <!-- <li class="page-item"><a class="page-link" href="#">1</a></li>
+      <li class="page-item"><a class="page-link" href="#">2</a></li>
+      <li class="page-item"><a class="page-link" href="#">3</a></li> -->
+    </ul>
+  </nav>
+
   <!-- Footer -->
-  <footer class="footer">
+  <!-- <footer class="footer">
     <p>© 2025 Expense Tracker | All Rights Reserved</p>
-  </footer>
+  </footer> -->
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 
- <script src="../js/homePage.js"></script>
+  <script src="../js/homePage.js"></script>
 </body>
+
 </html>
