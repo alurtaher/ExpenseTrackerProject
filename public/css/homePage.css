@@ -1,99 +1,20 @@
-:root {
-  --primary: #233b64;
-  --secondary: #3d5a80;
-  --accent: #293241;
-  --light: #d2eaf7;
-  --background: #f0f9ff;
-}
-
-html,
 body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
+  background-color: #f8f9fa;
 }
 
-body {
-  background-color: var(--background);
-  display: flex;
-  flex-direction: column;
+.container {
+  margin-top: 30px;
 }
 
-#navigation {
-  background-color: var(--primary);
+.topBtn {
+  margin: 5px;
+  background-color: white !important;
+  color: black !important;
+  border-radius: 6px;
+  padding: 5px 20px;
+  font-weight: 500;
 }
-
-.navbar-brand {
-  font-weight: bold;
-}
-
-#formContainer {
-  background-color: var(--secondary);
-  border-radius: 10px;
-  padding: 2rem;
-  margin-top: 1rem;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-#submitBtn {
-  background-color: var(--accent);
-  color: white;
-}
-
-#submitBtn:hover {
-  background: white;
-  color: var(--accent);
-}
-
-.table thead {
-  background-color: var(--secondary);
-  color: white;
-}
-
-.editDelete {
-  margin: 0 4px;
-}
-
-#buyPremiumBtn {
-  background: gold;
-  color: var(--accent);
-}
-
-.footer {
-  background: var(--accent);
-  color: white;
-  padding: 1rem;
-  text-align: center;
-  margin-top: auto;
-}
-
-@media (max-width: 576px) {
-  #formContainer {
-    padding: 1rem;
-  }
-
-  #submitBtn,
-  .navbar .btn {
-    width: 100%;
-  }
-
-  .navbar .d-flex {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-}
-
-.table td,
-.table th {
-  vertical-align: middle;
-  white-space: nowrap;
-}
-
-.page-link {
-  background-color: #3d5a80;
-  color: white;
-}
-.page-link:hover {
-  background-color: #d2eaf7;
-  color: #233b64;
+#buyPremiumBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
 }

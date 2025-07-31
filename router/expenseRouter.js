@@ -7,7 +7,6 @@ router.use(express.static("public"));
 
 router.get("/", expenseController.getHomePage);
 router.get("/getAllExpenses",userAuthentication, expenseController.getAllExpenses);
-router.get("/getAllExpenses/:page",userAuthentication,expenseController.getAllExpensesforPagination);
 router.delete("/deleteExpense/:id",userAuthentication, expenseController.deleteExpense);
 
 router.post("/addExpense", userAuthentication,expenseController.addExpense);

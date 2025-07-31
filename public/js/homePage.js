@@ -2,29 +2,78 @@ const form = document.getElementById("form1");
 const categoryInput = document.getElementById("categoryBtn");
 const descriptionInput = document.getElementById("descriptionValue");
 const amountInput = document.getElementById("amountValue");
+const dateInput = document.getElementById("dateValue");
 const table = document.getElementById("tbodyId");
 const submitBtn = document.getElementById("submitBtn");
 const buyPremiumBtn = document.getElementById("buyPremiumBtn");
 const leaderboardLink = document.getElementById("leaderboardLink");
 const reportsLink = document.getElementById("reportsLinkBtn");
+const limitSelect = document.getElementById("limit");
+const paginationUL = document.getElementById("paginationUL");
 
 let editingId = null;
 let token = localStorage.getItem("token");
+let currentPage = 1;
+let currentLimit = parseInt(limitSelect.value);
 
-// Helper to create table row
+// Set today's date by default
+dateInput.valueAsDate = new Date();
+
 function createExpenseRow(exp) {
   const tr = document.createElement("tr");
   tr.innerHTML = `
-    <td>${exp.date}</td>
-    <td>${exp.category}</td>
-    <td>${exp.description}</td>
-    <td>₹${exp.amount}</td>
-    <td>
-      <button class="btn btn-sm btn-danger delete">Delete</button>
-      <button class="btn btn-sm btn-secondary edit">Edit</button>
-      <input type="hidden" value="${exp.id}">
-    </td>`;
+        <td>${exp.date}</td>
+        <td>${exp.category}</td>
+        <td>${exp.description}</td>
+        <td>₹${exp.amount}</td>
+        <td>
+          <button class="btn btn-sm btn-danger delete">Delete</button>
+          <button class="btn btn-sm btn-secondary edit">Edit</button>
+          <input type="hidden" value="${exp.id}">
+        </td>`;
   return tr;
+}
+
+async function getAllExpenses(page = 1, limit = 5) {
+  currentPage = page;
+  currentLimit = limit;
+
+  try {
+    const res = await axios.get(
+      `http://localhost:3000/expense/getAllExpenses?page=${page}&limit=${limit}`,
+      {
+        headers: { Authorization: token },
+      }
+    );
+
+    table.innerHTML = "";
+    if (!res.data.expenses || res.data.expenses.length === 0) {
+      if (currentPage > 1) getAllExpenses(currentPage - 1, currentLimit);
+      return;
+    }
+
+    res.data.expenses.forEach((exp) => {
+      const tr = createExpenseRow(exp);
+      table.appendChild(tr);
+    });
+
+    // Pagination
+    paginationUL.innerHTML = "";
+    for (let i = 1; i <= res.data.totalPages; i++) {
+      const li = document.createElement("li");
+      li.className = "page-item" + (i === page ? " active" : "");
+      const a = document.createElement("a");
+      a.className = "page-link";
+      a.href = "#";
+      a.textContent = i;
+      a.addEventListener("click", () => getAllExpenses(i, currentLimit));
+      li.appendChild(a);
+      paginationUL.appendChild(li);
+    }
+  } catch (err) {
+    console.error("Failed to fetch expenses", err);
+    alert("Unable to load expenses.");
+  }
 }
 
 form.addEventListener("submit", async (e) => {
@@ -33,169 +82,72 @@ form.addEventListener("submit", async (e) => {
   const category = categoryInput.value.trim();
   const description = descriptionInput.value.trim();
   const amount = amountInput.value.trim();
+  const date = dateInput.value;
 
-  if (!category || !description || !amount) {
+  if (!category || !description || !amount || !date) {
     alert("Please fill all fields");
     return;
   }
-
-  const now = new Date();
-  const date = `${now.getDate().toString().padStart(2, "0")}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${now.getFullYear()}`;
 
   try {
     const url = editingId
       ? `http://localhost:3000/expense/editExpense/${editingId}`
       : "http://localhost:3000/expense/addExpense";
-
     const payload = editingId
       ? { category, description, amount }
-      : { date, category, description, amount };
+      : { category, description, amount, date };
 
-    await axios.post(url, payload, {
-      headers: { Authorization: token }
-    });
+    await axios.post(url, payload, { headers: { Authorization: token } });
 
     editingId = null;
     submitBtn.textContent = "Add Expense";
-    resetForm();
-    refreshApp();
+    form.reset();
+    dateInput.valueAsDate = new Date();
+    getAllExpenses(currentPage, currentLimit);
   } catch (err) {
-    console.error(err);
-    alert("Something went wrong. Please try again.");
+    alert("Error saving expense");
   }
 });
 
-async function getAllExpenses() {
-  try {
-    const res = await axios.get("http://localhost:3000/expense/getAllExpenses/1", {
-      headers: { Authorization: token }
-    });
-
-    const fragment = document.createDocumentFragment();
-    res.data.expenses.forEach((exp) => fragment.appendChild(createExpenseRow(exp)));
-    table.innerHTML = "";
-    table.appendChild(fragment);
-    const ul = document.getElementById("paginationUL");
-    for (let i = 1; i <= res.data.totalPages; i++) {
-      const li = document.createElement("li");
-      const a = document.createElement("a");
-      li.setAttribute("class", "page-item");
-      a.setAttribute("class", "page-link");
-      a.setAttribute("href", "#");
-      a.appendChild(document.createTextNode(i));
-      li.appendChild(a);
-      ul.appendChild(li);
-      a.addEventListener("click", paginationBtn);
-    }
-  } catch (err) {
-    console.error("Failed to fetch expenses", err);
-  }
-}
-
-async function paginationBtn(e) {
-  try {
-    const pageNo = e.target.textContent;
-    const token = localStorage.getItem("token");
-    const res = await axios.get(
-      `http://localhost:3000/expense/getAllExpenses/${pageNo}`,
-      { headers: { Authorization: token } }
-    );
-
-    table.innerHTML = "";
-
-    res.data.expenses.forEach((expenses) => {
-      const id = expenses.id;
-      const date = expenses.date;
-      const categoryValue = expenses.category;
-      const descriptionValue = expenses.description;
-      const amountValue = expenses.amount;
-
-      let tr = document.createElement("tr");
-      tr.className = "trStyle";
-
-      table.appendChild(tr);
-
-      let idValue = document.createElement("th");
-      idValue.setAttribute("scope", "row");
-      idValue.setAttribute("style", "display: none");
-
-      let th = document.createElement("th");
-      th.setAttribute("scope", "row");
-
-      tr.appendChild(idValue);
-      tr.appendChild(th);
-
-      idValue.appendChild(document.createTextNode(id));
-      th.appendChild(document.createTextNode(date));
-
-      let td1 = document.createElement("td");
-      td1.appendChild(document.createTextNode(categoryValue));
-
-      let td2 = document.createElement("td");
-      td2.appendChild(document.createTextNode(descriptionValue));
-
-      let td3 = document.createElement("td");
-      td3.appendChild(document.createTextNode(amountValue));
-
-      let td4 = document.createElement("td");
-
-      let deleteBtn = document.createElement("button");
-      deleteBtn.className = "editDelete btn btn-danger delete";
-      deleteBtn.appendChild(document.createTextNode("Delete"));
-
-      let editBtn = document.createElement("button");
-      editBtn.className = "editDelete btn btn-success edit";
-      editBtn.appendChild(document.createTextNode("Edit"));
-
-      td4.appendChild(deleteBtn);
-      td4.appendChild(editBtn);
-
-      tr.appendChild(td1);
-      tr.appendChild(td2);
-      tr.appendChild(td3);
-      tr.appendChild(td4);
-    });
-  } catch (error) {
-    console.log(error);
-  }
-}
-
 table.addEventListener("click", async (e) => {
-  const btn = e.target;
-  const row = btn.closest("tr");
-  if (!row) return;
+  const row = e.target.closest("tr");
+  const id = row.querySelector("input").value;
 
-  const id = row.querySelector("input[type='hidden']").value;
-
-  if (btn.classList.contains("delete")) {
-    if (!confirm("Are you sure you want to delete this expense?")) return;
-
-    try {
-      await axios.delete(`http://localhost:3000/expense/deleteExpense/${id}`, {
-        headers: { Authorization: token }
-      });
-      refreshApp();
-    } catch (err) {
-      console.error(err);
-      alert("Failed to delete expense.");
+  if (e.target.classList.contains("delete")) {
+    if (confirm("Delete this expense?")) {
+      try {
+        await axios.delete(
+          `http://localhost:3000/expense/deleteExpense/${id}`,
+          {
+            headers: { Authorization: token },
+          }
+        );
+        getAllExpenses(currentPage, currentLimit);
+      } catch (err) {
+        alert("Failed to delete expense");
+      }
     }
   }
 
-  if (btn.classList.contains("edit")) {
+  if (e.target.classList.contains("edit")) {
     categoryInput.value = row.children[1].textContent;
     descriptionInput.value = row.children[2].textContent;
     amountInput.value = row.children[3].textContent.replace("₹", "");
-
     editingId = id;
     submitBtn.textContent = "Update Expense";
   }
 });
 
+buyPremiumBtn.addEventListener("click", buyPremium);
+
 async function buyPremium() {
   try {
-    const res = await axios.get("http://localhost:3000/purchase/premiumMembership", {
-      headers: { Authorization: token }
-    });
+    const res = await axios.get(
+      "http://localhost:3000/purchase/premiumMembership",
+      {
+        headers: { Authorization: token },
+      }
+    );
 
     if (res.data.isPremium) {
       alert(res.data.message);
@@ -206,7 +158,7 @@ async function buyPremium() {
 
     const result = await Cashfree({ mode: "sandbox" }).checkout({
       paymentSessionId,
-      redirectTarget: "_modal"
+      redirectTarget: "_modal",
     });
 
     if (result.paymentDetails) {
@@ -225,71 +177,61 @@ async function buyPremium() {
   }
 }
 
-async function checkPremiumStatus() {
-  try {
-    const res = await axios.get("http://localhost:3000/user/isPremiumUser", {
-      headers: { Authorization: token }
-    });
+leaderboardLink.addEventListener("click", (e) => {
+  if (leaderboardLink.disabled) return;
+  window.location.href = `/premium/getLeaderboardPage?token=${token}`;
+});
 
-    if (res.data.isPremiumUser) {
-      buyPremiumBtn.innerHTML = "👑 Premium Member";
-      buyPremiumBtn.disabled = true;
-      buyPremiumBtn.removeEventListener("click", buyPremium);
-    }
-  } catch (err) {
-    console.log("Premium check failed", err);
-  }
-}
+reportsLink.addEventListener("click", (e) => {
+  if (reportsLink.disabled) return;
+  window.location.href = `/reports/getReportsPage?token=${token}`;
+});
 
-function logout() {
+limitSelect.addEventListener("change", () => {
+  getAllExpenses(1, parseInt(limitSelect.value));
+});
+
+document.getElementById("logoutBtn").addEventListener("click", () => {
   localStorage.removeItem("token");
   window.location.href = "/";
-}
+});
 
-function resetForm() {
-  form.reset();
-  editingId = null;
-  submitBtn.textContent = "Add Expense";
-}
-
-function refreshApp() {
-  getAllExpenses();
+document.addEventListener("DOMContentLoaded", () => {
+  getAllExpenses(currentPage, currentLimit);
   checkPremiumStatus();
-}
+});
 
-async function leaderboard() {
+async function checkPremiumStatus() {
   try {
     const res = await axios.get("/user/isPremiumUser", {
-      headers: { Authorization: token }
+      headers: { Authorization: token },
     });
 
-    if (res.data.isPremiumUser) {
-      window.location.href = `/premium/getLeaderboardPage?token=${token}`;
+    const isPremium = res.data.isPremiumUser;
+
+    if (isPremium) {
+      buyPremiumBtn.textContent = "You are a Premium User";
+      buyPremiumBtn.disabled = true;
+      buyPremiumBtn.classList.replace("btn-success", "btn-secondary");
     } else {
-      alert("Access Denied: Not a Premium User");
+      leaderboardLink.disabled = true;
+      reportsLink.disabled = true;
+      leaderboardLink.classList.add("btn-secondary");
+      reportsLink.classList.add("btn-secondary");
+      leaderboardLink.title = "Only premium users can access Leaderboard";
+      reportsLink.title = "Only premium users can access Reports";
+
+      leaderboardLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        alert("Access Denied: Premium users only");
+      });
+
+      reportsLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        alert("Access Denied: Premium users only");
+      });
     }
   } catch (err) {
-    alert("Access Denied: Only Premium Users allowed");
+    console.error("Error checking premium status", err);
   }
 }
-
-async function report() {
-  try {
-    const res = await axios.get('/user/isPremiumUser',{
-      headers: { Authorization: token }
-    })
-    if (res.data.isPremiumUser) {
-      window.location.href = `/reports/getReportsPage?token=${token}`;
-    } else {
-      alert("Access Denied: Not a Premium User");
-    }
-  } catch (error) {
-    alert("Access Denied: Only Premium Users allowed");
-  }
-}
-
-// Event bindings
-document.addEventListener("DOMContentLoaded", refreshApp);
-buyPremiumBtn.addEventListener("click", buyPremium);
-leaderboardLink.addEventListener("click", leaderboard);
-reportsLink.addEventListener("click",report)

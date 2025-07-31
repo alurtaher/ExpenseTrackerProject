@@ -1,168 +1,329 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Expense Tracker</title>
 
-  <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <!-- Axios -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.2/axios.min.js"></script>
-  <!-- Cashfree -->
-  <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
-
-  <link rel="stylesheet" href="../css/homePage.css">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    .topBtn {
+      background-color: white !important;
+      color: black !important;
+      border-radius: 6px;
+      padding: 5px 20px;
+      margin: 5px;
+      font-weight: 500;
+    }
+    .page-item.active .page-link {
+      background-color: #0d6efd;
+      border-color: #0d6efd;
+    }
+  </style>
 </head>
+<body class="bg-light">
 
-<body>
-
-  <!-- Navbar -->
-  <!-- <nav class="navbar navbar-expand-lg navbar-dark" id="navigation">
-        <div class="container-fluid">
-            <a href="/homePage">
-                <img src="../views/euro.png" width="30px" height="30px" id="png" />
-            </a>
-            <a class="navbar-brand" href="/homePage">Expense Tracker</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
-        <div class="d-flex flex-column flex-lg-row gap-2">
-          <button id="leaderboardLink" class="btn btn-success">
-            <i class="fas fa-crown me-1"></i> Leaderboard
-          </button>
-          <button id="reportsLinkBtn" class="btn btn-success">
-            <i class="fas fa-crown me-1"></i> Reports
-          </button>
-          <button id="buyPremiumBtn" class="btn">
-            <i class="fas fa-crown me-1"></i> Buy Premium
-          </button>
-          <button class="btn btn-danger" onclick="logout()">
-            <i class="fas fa-sign-out-alt me-1"></i> Logout
-          </button>
-        </div>
-      </div>
-    </div>
-  </nav> -->
-
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark" id="navigation">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-      <a href="/homePage">
-        <img src="../views/euro.png" width="30px" height="30px" id="png" />
-      </a>
-      <a class="navbar-brand" href="/homePage">Expense Tracker</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse justify-content-between" id="navbarContent">
-        <!-- Left Side -->
-        <div class="d-flex gap-2">
-          <button id="leaderboardLink" class="btn btn-success">
-            <i class="fas fa-crown me-1"></i> Leaderboard
-          </button>
-          <button id="reportsLinkBtn" class="btn btn-success">
-            <i class="fas fa-chart-line me-1"></i> Reports
-          </button>
-        </div>
-
-        <!-- Right Side -->
-        <div class="d-flex gap-2">
-          <button id="buyPremiumBtn" class="btn btn-light">
-            <i class="fas fa-gem me-1"></i> Buy Premium
-          </button>
-          <button class="btn btn-danger" onclick="logout()">
-            <i class="fas fa-sign-out-alt me-1"></i> Logout
-          </button>
-        </div>
+      <span class="navbar-brand">Expense Tracker</span>
+      <div class="d-flex">
+        <button id="leaderboardLink" class="btn btn-outline-secondary topBtn">Leaderboard</button>
+        <button id="reportsLinkBtn" class="btn btn-outline-secondary topBtn">Reports</button>
+        <button id="buyPremiumBtn" class="btn btn-success topBtn">Buy Premium</button>
+        <button id="logoutBtn" class="btn btn-danger topBtn">Logout</button>
       </div>
     </div>
   </nav>
 
-  <!-- Form -->
-  <div class="container" id="formContainer">
-    <form id="form1" class="row gy-2 gx-3">
-      <div class="col-12 col-md-4">
-        <select class="form-select" id="categoryBtn">
-          <option selected disabled>Select Category</option>
-          <option>Food</option>
-          <option>Travel</option>
-          <option>Groceries</option>
-          <option>Entertainment</option>
-          <option>Rent</option>
-          <option>Utilities</option>
-          <option>Internet</option>
-          <option>Mobile Recharge</option>
-          <option>Shopping</option>
-          <option>Fuel</option>
-          <option>Health</option>
-          <option>Insurance</option>
-          <option>Education</option>
-          <option>EMI</option>
-          <option>Subscriptions</option>
-          <option>Gym</option>
-          <option>Donations</option>
-          <option>Personal Care</option>
-          <option>Miscellaneous</option>
-          <option>Investments</option>
+  <div class="container mt-4">
+    <form id="form1" class="row g-2">
+      <div class="col-md-2">
+        <select id="categoryBtn" class="form-select">
+          <option value="">Select Category</option>
+          <option>Food</option><option>Transport</option><option>Shopping</option>
+          <option>Rent</option><option>Salary</option><option>Medical</option>
+          <option>Entertainment</option><option>Education</option><option>Insurance</option>
+          <option>Groceries</option><option>Fitness</option><option>Utilities</option>
+          <option>Travel</option><option>Recharge</option><option>Investment</option>
         </select>
       </div>
-      <div class="col-12 col-md-4">
-        <input type="text" class="form-control" placeholder="Description" id="descriptionValue" />
+      <div class="col-md-2">
+        <input type="text" id="descriptionValue" class="form-control" placeholder="Description"/>
       </div>
-      <div class="col-12 col-md-4">
-        <input type="number" class="form-control" placeholder="Amount" id="amountValue" />
+      <div class="col-md-2">
+        <input type="number" id="amountValue" class="form-control" placeholder="Amount"/>
       </div>
-      <div class="col-12 text-end">
-        <button type="submit" class="btn" id="submitBtn">Add Expense</button>
+      <div class="col-md-2">
+        <input type="date" id="dateValue" class="form-control" />
+      </div>
+      <div class="col-md-2">
+        <button type="submit" id="submitBtn" class="btn btn-primary w-100">Add Expense</button>
       </div>
     </form>
-  </div>
 
-  <!-- Table -->
-  <div class="container mt-4">
-    <h4>Recent Expenses</h4>
-    <div class="table-responsive">
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Category</th>
-            <th>Description</th>
-            <th>Amount</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="tbodyId"></tbody>
-      </table>
+    <hr/>
+    <div class="d-flex justify-content-between align-items-center">
+      <h5 class="mt-2">Your Expenses</h5>
+      <div>
+        <label for="limit" class="me-1">Items per page:</label>
+        <select id="limit" class="form-select d-inline-block w-auto">
+          <option value="2">2</option>
+          <option value="5" selected>5</option>
+          <option value="10">10</option>
+          <option value="15">15</option>
+          <option value="20">20</option>
+        </select>
+      </div>
     </div>
+
+    <table class="table table-striped mt-3">
+      <thead>
+        <tr>
+          <th>Date</th><th>Category</th><th>Description</th><th>Amount</th><th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="tbodyId"></tbody>
+    </table>
+
+    <nav>
+      <ul id="paginationUL" class="pagination justify-content-center"></ul>
+    </nav>
   </div>
 
-  <nav aria-label="Page navigation example">
-    <ul id="paginationUL" class="pagination justify-content-md-end">
-      <!-- <li class="page-item"><a class="page-link" href="#">1</a></li>
-      <li class="page-item"><a class="page-link" href="#">2</a></li>
-      <li class="page-item"><a class="page-link" href="#">3</a></li> -->
-    </ul>
-  </nav>
+  <!-- Axios CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <!-- Cashfree SDK -->
+  <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+  <script>
+    const form = document.getElementById("form1");
+    const categoryInput = document.getElementById("categoryBtn");
+    const descriptionInput = document.getElementById("descriptionValue");
+    const amountInput = document.getElementById("amountValue");
+    const dateInput = document.getElementById("dateValue");
+    const table = document.getElementById("tbodyId");
+    const submitBtn = document.getElementById("submitBtn");
+    const buyPremiumBtn = document.getElementById("buyPremiumBtn");
+    const leaderboardLink = document.getElementById("leaderboardLink");
+    const reportsLink = document.getElementById("reportsLinkBtn");
+    const limitSelect = document.getElementById("limit");
+    const paginationUL = document.getElementById("paginationUL");
 
-  <!-- Footer -->
-  <!-- <footer class="footer">
-    <p>© 2025 Expense Tracker | All Rights Reserved</p>
-  </footer> -->
+    let editingId = null;
+    let token = localStorage.getItem("token");
+    let currentPage = 1;
+    let currentLimit = parseInt(limitSelect.value);
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    // Set today's date by default
+    dateInput.valueAsDate = new Date();
 
-  <script src="../js/homePage.js"></script>
+    function createExpenseRow(exp) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${exp.date}</td>
+        <td>${exp.category}</td>
+        <td>${exp.description}</td>
+        <td>₹${exp.amount}</td>
+        <td>
+          <button class="btn btn-sm btn-danger delete">Delete</button>
+          <button class="btn btn-sm btn-secondary edit">Edit</button>
+          <input type="hidden" value="${exp.id}">
+        </td>`;
+      return tr;
+    }
+
+    async function getAllExpenses(page = 1, limit = 5) {
+      currentPage = page;
+      currentLimit = limit;
+
+      try {
+        const res = await axios.get(`http://localhost:3000/expense/getAllExpenses?page=${page}&limit=${limit}`, {
+          headers: { Authorization: token },
+        });
+
+        table.innerHTML = "";
+        if (!res.data.expenses || res.data.expenses.length === 0) {
+          if (currentPage > 1) getAllExpenses(currentPage - 1, currentLimit);
+          return;
+        }
+
+        res.data.expenses.forEach((exp) => {
+          const tr = createExpenseRow(exp);
+          table.appendChild(tr);
+        });
+
+        // Pagination
+        paginationUL.innerHTML = "";
+        for (let i = 1; i <= res.data.totalPages; i++) {
+          const li = document.createElement("li");
+          li.className = "page-item" + (i === page ? " active" : "");
+          const a = document.createElement("a");
+          a.className = "page-link";
+          a.href = "#";
+          a.textContent = i;
+          a.addEventListener("click", () => getAllExpenses(i, currentLimit));
+          li.appendChild(a);
+          paginationUL.appendChild(li);
+        }
+      } catch (err) {
+        console.error("Failed to fetch expenses", err);
+        alert("Unable to load expenses.");
+      }
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const category = categoryInput.value.trim();
+      const description = descriptionInput.value.trim();
+      const amount = amountInput.value.trim();
+      const date = dateInput.value;
+
+      if (!category || !description || !amount || !date) {
+        alert("Please fill all fields");
+        return;
+      }
+
+      try {
+        const url = editingId
+          ? `http://localhost:3000/expense/editExpense/${editingId}`
+          : "http://localhost:3000/expense/addExpense";
+        const payload = editingId
+          ? { category, description, amount }
+          : { category, description, amount, date };
+
+        await axios.post(url, payload, { headers: { Authorization: token } });
+
+        editingId = null;
+        submitBtn.textContent = "Add Expense";
+        form.reset();
+        dateInput.valueAsDate = new Date();
+        getAllExpenses(currentPage, currentLimit);
+      } catch (err) {
+        alert("Error saving expense");
+      }
+    });
+
+    table.addEventListener("click", async (e) => {
+      const row = e.target.closest("tr");
+      const id = row.querySelector("input").value;
+
+      if (e.target.classList.contains("delete")) {
+        if (confirm("Delete this expense?")) {
+          try {
+            await axios.delete(`http://localhost:3000/expense/deleteExpense/${id}`, {
+              headers: { Authorization: token },
+            });
+            getAllExpenses(currentPage, currentLimit);
+          } catch (err) {
+            alert("Failed to delete expense");
+          }
+        }
+      }
+
+      if (e.target.classList.contains("edit")) {
+        categoryInput.value = row.children[1].textContent;
+        descriptionInput.value = row.children[2].textContent;
+        amountInput.value = row.children[3].textContent.replace("₹", "");
+        editingId = id;
+        submitBtn.textContent = "Update Expense";
+      }
+    });
+
+    buyPremiumBtn.addEventListener("click", buyPremium);
+
+    async function buyPremium() {
+      try {
+        const res = await axios.get("http://localhost:3000/purchase/premiumMembership", {
+          headers: { Authorization: token },
+        });
+
+        if (res.data.isPremium) {
+          alert(res.data.message);
+          return;
+        }
+
+        const { paymentSessionId, orderId } = res.data;
+
+        const result = await Cashfree({ mode: "sandbox" }).checkout({
+          paymentSessionId,
+          redirectTarget: "_modal",
+        });
+
+        if (result.paymentDetails) {
+          await axios.post(
+            `http://localhost:3000/purchase/updateTransactionStatus/${orderId}`,
+            {},
+            { headers: { Authorization: token } }
+          );
+
+          alert("Payment successful! You are now a premium member.");
+          window.location.reload();
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Payment failed or was cancelled.");
+      }
+    }
+
+    leaderboardLink.addEventListener("click", (e) => {
+      if (leaderboardLink.disabled) return;
+      window.location.href = `/premium/getLeaderboardPage?token=${token}`;
+    });
+
+    reportsLink.addEventListener("click", (e) => {
+      if (reportsLink.disabled) return;
+      window.location.href = `/reports/getReportsPage?token=${token}`;
+    });
+
+    limitSelect.addEventListener("change", () => {
+      getAllExpenses(1, parseInt(limitSelect.value));
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("token");
+      window.location.href = "/";
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      getAllExpenses(currentPage, currentLimit);
+      checkPremiumStatus();
+    });
+
+    async function checkPremiumStatus() {
+      try {
+        const res = await axios.get("/user/isPremiumUser", {
+          headers: { Authorization: token },
+        });
+
+        const isPremium = res.data.isPremiumUser;
+
+        if (isPremium) {
+          buyPremiumBtn.textContent = "You are a Premium User";
+          buyPremiumBtn.disabled = true;
+          buyPremiumBtn.classList.replace("btn-success", "btn-secondary");
+        } else {
+          leaderboardLink.disabled = true;
+          reportsLink.disabled = true;
+          leaderboardLink.classList.add("btn-secondary");
+          reportsLink.classList.add("btn-secondary");
+          leaderboardLink.title = "Only premium users can access Leaderboard";
+          reportsLink.title = "Only premium users can access Reports";
+
+          leaderboardLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            alert("Access Denied: Premium users only");
+          });
+
+          reportsLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            alert("Access Denied: Premium users only");
+          });
+        }
+      } catch (err) {
+        console.error("Error checking premium status", err);
+      }
+    }
+  </script>
 </body>
-
 </html>

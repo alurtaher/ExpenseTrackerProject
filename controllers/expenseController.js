@@ -42,38 +42,36 @@ exports.addExpense = async (req, res, next) => {
 exports.getAllExpenses = async (req, res) => {
   try {
     const userId = req.user.id;
+    const pageNo = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
 
+    console.log("pages " + pageNo + "Limit is " + limit);
+    //If wanted by Pages
+    if (pageNo && limit) {
+      const offset = (pageNo - 1) * limit;
+      const totalExpenses = await Expense.count({
+        where: { userId: req.user.id },
+      });
+      const totalPages = Math.ceil(totalExpenses / limit);
+      const expenses = await Expense.findAll({
+        where: { userId: req.user.id },
+        order: [["createdAt", "DESC"]],
+        offset: offset,
+        limit: limit,
+      });
+      return res.json({ expenses: expenses, totalPages: totalPages });
+    }
+
+    //Else all the remaining Data
     const expenses = await Expense.findAll({
       where: { userId },
       order: [["createdAt", "DESC"]], // show latest first
-      // limit: 10, // For future pagination
-      // offset: 0
     });
 
     return res.status(200).json(expenses);
   } catch (error) {
     console.error("Error fetching expenses:", error);
     return res.status(500).json({ message: "Error in fetching expenses" });
-  }
-};
-
-exports.getAllExpensesforPagination = async (req, res) => {
-  try {
-    const pageNo = req.params.page;
-    const limit = 10;
-    const offset = (pageNo - 1) * limit;
-    const totalExpenses = await Expense.count({
-      where: { userId: req.user.id },
-    });
-    const totalPages = Math.ceil(totalExpenses / limit);
-    const expenses = await Expense.findAll({
-      where: { userId: req.user.id },
-      offset: offset,
-      limit: limit,
-    });
-    res.json({ expenses: expenses, totalPages: totalPages });
-  } catch (err) {
-    console.log(err);
   }
 };
 
