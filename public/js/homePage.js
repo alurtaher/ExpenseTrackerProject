@@ -195,11 +195,11 @@ async function leaderboard() {
 
 async function report() {
   try {
-    const res = await axios.get('/reports/getReportsPage',{
+    const res = await axios.get('/user/isPremiumUser',{
       headers: { Authorization: token }
     })
     if (res.data.isPremiumUser) {
-      window.location.href = `/premium/getLeaderboardPage?token=${token}`;
+      window.location.href = `/reports/getReportsPage?token=${token}`;
     } else {
       alert("Access Denied: Not a Premium User");
     }
