@@ -7,7 +7,7 @@ const dotenv = require("dotenv")
 dotenv.config();
 
 function generateAccessToken(id, email) {
-  return jwt.sign({ userId: id, email: email }, "secret");
+  return jwt.sign({ userId: id, email: email }, process.env.SECRET_KEY);
 }
 
 const isPremiumUser = (req, res, next) => {
@@ -22,7 +22,7 @@ const getLoginPage = (req, res, next) => {
   res.sendFile(path.join(__dirname, "../", "public", "views", "login.html"));
 };
 
-const postUserSignUp = (req, res, next) => {
+const postUserSignUp = (req, res) => {
   const name = req.body.name;
   const email = req.body.email;
   const password = req.body.password;

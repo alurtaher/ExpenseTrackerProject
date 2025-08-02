@@ -46,7 +46,7 @@ exports.sendMail = async (req, res, next) => {
     apiKey.apiKey = process.env.RESET_PASSWORD_API_KEY;
     const transEmailApi = new Sib.TransactionalEmailsApi();
     const sender = {
-      email: "taherbasha295@gmail.com",
+      email: process.env.SENDER_EMAIL,
       name: "Taher Basha",
     };
     const receivers = [

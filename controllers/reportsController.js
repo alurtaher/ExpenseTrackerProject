@@ -9,6 +9,7 @@ exports.getReportsPage = (req, res, next) => {
 exports.dailyReports = async (req, res, next) => {
   try {
     const date = req.body.date;
+    console.log(date)
     const expenses = await Expense.findAll({
       where: { date: date, userId: req.user.id },
     });

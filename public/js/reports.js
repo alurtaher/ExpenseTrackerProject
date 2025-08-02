@@ -24,6 +24,7 @@ async function getDailyReport(e) {
     )
       .toString()
       .padStart(2, "0")}-${date.getFullYear()}`;
+      console.log(formattedDate)
 
     let totalAmount = 0;
     const res = await axios.post(

@@ -34,6 +34,14 @@ function createExpenseRow(exp) {
   return tr;
 }
 
+function formatDateToDDMMYYYY(dateStr) {
+  const date = new Date(dateStr);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+}
+
 async function getAllExpenses(page = 1, limit = 5) {
   currentPage = page;
   currentLimit = limit;
@@ -82,7 +90,8 @@ form.addEventListener("submit", async (e) => {
   const category = categoryInput.value.trim();
   const description = descriptionInput.value.trim();
   const amount = amountInput.value.trim();
-  const date = dateInput.value;
+  const rawDate = dateInput.value;
+  const formattedDate = formatDateToDDMMYYYY(rawDate);
 
   if (!category || !description || !amount || !date) {
     alert("Please fill all fields");
@@ -95,7 +104,7 @@ form.addEventListener("submit", async (e) => {
       : "http://localhost:3000/expense/addExpense";
     const payload = editingId
       ? { category, description, amount }
-      : { category, description, amount, date };
+      : { category, description, amount, date: formattedDate };
 
     await axios.post(url, payload, { headers: { Authorization: token } });
 

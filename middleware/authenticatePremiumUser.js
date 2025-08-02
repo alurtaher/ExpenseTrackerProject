@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel"); // adjust path to your User model
+require('dotenv').config();
 
 module.exports = async (req, res, next) => {
   try {
@@ -9,7 +10,7 @@ module.exports = async (req, res, next) => {
     }
 
     console.log("Token Received in auth is " + token);
-    const userData = jwt.verify(token, "secret");
+    const userData = jwt.verify(token, process.env.SECRET_KEY);
 
     const user = await User.findByPk(userData.userId);
     // console.log("User is "+user.isPremiumUser)
