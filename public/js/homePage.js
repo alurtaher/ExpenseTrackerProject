@@ -92,16 +92,17 @@ form.addEventListener("submit", async (e) => {
   const amount = amountInput.value.trim();
   const rawDate = dateInput.value;
   const formattedDate = formatDateToDDMMYYYY(rawDate);
-
+  
   if (!category || !description || !amount || !date) {
     alert("Please fill all fields");
     return;
   }
-
+  
   try {
     const url = editingId
-      ? `http://localhost:3000/expense/editExpense/${editingId}`
-      : "http://localhost:3000/expense/addExpense";
+    ? `http://localhost:3000/expense/editExpense/${editingId}`
+    : "http://localhost:3000/expense/addExpense";
+    console.log("Formatted Date is "+formattedDate)
     const payload = editingId
       ? { category, description, amount }
       : { category, description, amount, date: formattedDate };

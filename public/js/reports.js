@@ -8,23 +8,18 @@ const monthShowBtn = document.getElementById("monthShowBtn");
 const tbodyMonthly = document.getElementById("tbodyMonthlyId");
 const tfootMonthly = document.getElementById("tfootMonthlyId");
 
-document.getElementById("logoutBtn")
-  .addEventListener("click",()=>{
-    localStorage.removeItem("token")
-    window.location.href = '/'
-  })
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  localStorage.removeItem("token");
+  window.location.href = "/";
+});
 
 async function getDailyReport(e) {
   try {
     e.preventDefault();
     const token = localStorage.getItem("token");
     const date = new Date(dateInput.value);
-    const formattedDate = `${date.getDate().toString().padStart(2, "0")}-${(
-      date.getMonth() + 1
-    )
-      .toString()
-      .padStart(2, "0")}-${date.getFullYear()}`;
-      console.log(formattedDate)
+    const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString()
+      .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
 
     let totalAmount = 0;
     const res = await axios.post(
