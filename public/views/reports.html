@@ -67,6 +67,7 @@
             <input type="date" class="form-control" id="date" />
           </div>
           <button type="submit" id="dateShowBtn" class="btn btn-primary showBtn">Show</button>
+          <button type="submit" id="dayDownloadBtn" class="btn btn-danger showBtn">Download</button>
         </form>
       </div>
     </div>
@@ -115,6 +116,7 @@
             <input type="month" class="form-control" id="month" />
           </div>
           <button id="monthShowBtn" type="submit" class="btn btn-primary showBtn">Show</button>
+          <button id="monthDownloadBtn" type="submit" class="btn btn-danger showBtn">Download</button>
         </form>
       </div>
     </div>
@@ -145,12 +147,30 @@
   </div>
 
   <!-- ------------------------------------------------------------------------- -->
+  <!-- Downloaded Files Table -->
+  <div class="container table-responsive mt-4 p-3 d-flex flex-column bd-highlight" id="downloadsTableContainer">
+    <h3 class="mb-3">Downloaded Files</h3>
+    <table id="downloadsTable" class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th scope="col">File Name</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody id="downloadsTbody">
+        <!-- Rows will be added dynamically -->
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- ------------------------------------------------------------------------- -->
   <!-- Yearly Table -->
 
-  
-<!--<div class="container table-responsive mt-4 mb-3 p-3 d-flex bd-highlight" id="table">
+
+  <!--<div class="container table-responsive mt-4 mb-3 p-3 d-flex bd-highlight" id="table">
     <-- ------------------------------------------------------------------------- -->
-    <!-- Yearly table Form -->
+  <!-- Yearly table Form -->
 
   <!--  <div class="ps-2 pe-4 py-1 ms-3 me-5 my-1 bd-highlight">
       <div class="my-1">
@@ -222,4 +242,4 @@
   <script src="../js/reports.js"></script>
 </body>
 
-</html> 
+</html>

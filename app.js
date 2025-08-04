@@ -16,6 +16,7 @@ const resetPasswordRouter = require("./router/resetPasswordRouter");
 const reportsRouter = require("./router/reportsRouter");
 
 const User = require("./models/userModel");
+const Filedownloaded = require('./models/filedownloaded')
 const Expense = require("./models/expenseModel");
 const Order = require("./models/ordersModel");
 const ResetPassword = require("./models/resetPasswordModel");
@@ -38,6 +39,15 @@ Expense.belongsTo(User);
 
 User.hasMany(Order);
 Order.belongsTo(User);
+
+User.hasMany(Filedownloaded, {
+  foreignKey: 'userId',
+  onDelete: 'CASCADE',
+});
+Filedownloaded.belongsTo(User, {
+  foreignKey: 'userId',
+  onDelete: 'CASCADE',
+});
 
 ResetPassword.belongsTo(User);
 User.hasMany(ResetPassword);

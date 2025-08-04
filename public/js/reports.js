@@ -7,6 +7,8 @@ const monthInput = document.getElementById("month");
 const monthShowBtn = document.getElementById("monthShowBtn");
 const tbodyMonthly = document.getElementById("tbodyMonthlyId");
 const tfootMonthly = document.getElementById("tfootMonthlyId");
+const dayDownloadBtn = document.getElementById("dayDownloadBtn");
+const monthDownloadBtn = document.getElementById("monthDownloadBtn");
 
 document.getElementById("logoutBtn").addEventListener("click", () => {
   localStorage.removeItem("token");
@@ -18,7 +20,8 @@ async function getDailyReport(e) {
     e.preventDefault();
     const token = localStorage.getItem("token");
     const date = new Date(dateInput.value);
-    const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString()
+    const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1)
+      .toString()
       .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
 
     let totalAmount = 0;
@@ -33,7 +36,7 @@ async function getDailyReport(e) {
     tbodyDaily.innerHTML = "";
     tfootDaily.innerHTML = "";
 
-    res.data.forEach((expense) => {
+    res.data.expenses.forEach((expense) => {
       totalAmount += expense.amount;
 
       const tr = document.createElement("tr");
@@ -103,7 +106,7 @@ async function getMonthlyReport(e) {
     tbodyMonthly.innerHTML = "";
     tfootMonthly.innerHTML = "";
 
-    res.data.forEach((expense) => {
+    res.data.expenses.forEach((expense) => {
       totalAmount += expense.amount;
 
       const tr = document.createElement("tr");
@@ -152,5 +155,111 @@ async function getMonthlyReport(e) {
   }
 }
 
+async function getDayFile(e) {
+  try {
+    e.preventDefault();
+    const token = localStorage.getItem("token") + "";
+    const date = new Date(dateInput.value);
+    if (date == "Invalid Date") alert("First select the date");
+    const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
+
+    const res = await axios.get(
+      `http://localhost:3000/reports/dailyReports/download?date=${formattedDate}`,
+      { headers: { Authorization: token } }
+    );
+
+    if (res) {
+      if (res.status === 200) {
+        var a = document.createElement("a");
+        a.href = res.data.fileUrl;
+        a.download = "myexpense.csv";
+        a.click();
+      } else {
+        throw new Error(res.data.message);
+      }
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+async function getMonthFile(e) {
+  try {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+    const month = new Date(monthInput.value);
+    const formattedMonth = `${(month.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}`;
+    const res = await axios.get(
+      `http://localhost:3000/reports/monthlyReports/download?month=${formattedMonth}`,
+      { headers: { Authorization: token } }
+    );
+
+    if (res) {
+      if (res.status === 200) {
+        var a = document.createElement("a");
+        a.href = res.data.fileUrl;
+        a.download = "myexpense.csv";
+        a.click();
+      } else {
+        throw new Error(res.data.message);
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+function populateDownloadsTable(files) {
+  const tbody = document.getElementById("downloadsTbody");
+  tbody.innerHTML = ""; // clear old data
+
+  files.forEach((file, index) => {
+    const row = document.createElement("tr");
+
+    // File name
+    const nameCell = document.createElement("td");
+    nameCell.textContent = `Report ${index + 1}`;
+    row.appendChild(nameCell);
+
+    // Download button
+    const actionCell = document.createElement("td");
+    const downloadBtn = document.createElement("a");
+    downloadBtn.href = file.filedownloadurl;
+    downloadBtn.className = "btn btn-sm btn-success";
+    downloadBtn.textContent = "Download";
+    downloadBtn.setAttribute("target", "_blank");
+    actionCell.appendChild(downloadBtn);
+
+    row.appendChild(actionCell);
+    tbody.appendChild(row);
+  });
+}
+
+async function fetchDownloadedFiles() {
+  try {
+    const token = localStorage.getItem("token"); // or however you're storing it
+    const res = await axios.get("http://localhost:3000/reports/downloadedfiles", {
+      headers: { Authorization: token },
+    });
+
+    if (res.data.success) {
+      populateDownloadsTable(res.data.files);
+    } else {
+      console.warn("Could not fetch files");
+    }
+  } catch (err) {
+    console.error("Error fetching downloaded files", err);
+  }
+}
+
+// Fetch on page load
+window.addEventListener("DOMContentLoaded", fetchDownloadedFiles);
+
 dateShowBtn.addEventListener("click", getDailyReport);
 monthShowBtn.addEventListener("click", getMonthlyReport);
+dayDownloadBtn.addEventListener("click", getDayFile);
+monthDownloadBtn.addEventListener("click", getMonthFile);
