@@ -10,7 +10,7 @@ const leaderboardLink = document.getElementById("leaderboardLink");
 const reportsLink = document.getElementById("reportsLinkBtn");
 const limitSelect = document.getElementById("limit");
 const paginationUL = document.getElementById("paginationUL");
-import BASEURL from './const.js'
+let BASEURL = "http://13.204.69.174:3000"
 
 let editingId = null;
 let token = localStorage.getItem("token");
