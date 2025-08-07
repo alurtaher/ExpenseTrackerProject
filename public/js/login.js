@@ -5,6 +5,7 @@ const signUpBtn = document.getElementById("signUpBtn");
 const loginBtn = document.getElementById("loginBtn");
 const loginEmail = document.getElementById("loginEmail");
 const loginPassword = document.getElementById("loginPassword");
+const BASEURL = require('./const.js')
 
 signUp.addEventListener("click", () => {
   container.classList.add("right-panel-active");
@@ -21,7 +22,7 @@ function login() {
   };
 
   axios
-    .post("http://localhost:3000/user/login", loginDetails)
+    .post(`${BASEURL}/user/login`, loginDetails)
     .then((result) => {
       alert(result.data.message);
       localStorage.setItem("token", result.data.token);

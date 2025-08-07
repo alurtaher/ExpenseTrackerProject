@@ -10,6 +10,7 @@ const leaderboardLink = document.getElementById("leaderboardLink");
 const reportsLink = document.getElementById("reportsLinkBtn");
 const limitSelect = document.getElementById("limit");
 const paginationUL = document.getElementById("paginationUL");
+const BASEURL = require('./const.js')
 
 let editingId = null;
 let token = localStorage.getItem("token");
@@ -48,7 +49,7 @@ async function getAllExpenses(page = 1, limit = 5) {
 
   try {
     const res = await axios.get(
-      `http://localhost:3000/expense/getAllExpenses?page=${page}&limit=${limit}`,
+      `${BASEURL}/expense/getAllExpenses?page=${page}&limit=${limit}`,
       {
         headers: { Authorization: token },
       }
