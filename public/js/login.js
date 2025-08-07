@@ -5,7 +5,7 @@ const signUpBtn = document.getElementById("signUpBtn");
 const loginBtn = document.getElementById("loginBtn");
 const loginEmail = document.getElementById("loginEmail");
 const loginPassword = document.getElementById("loginPassword");
-let BASEURL = "http://13.204.69.174:3000"
+let BASEURL = "http://13.204.69.174"
 
 signUp.addEventListener("click", () => {
   container.classList.add("right-panel-active");
