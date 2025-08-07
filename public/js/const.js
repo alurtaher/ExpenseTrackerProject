@@ -1,2 +1,1 @@
-let BASEURL = "http://13.204.69.174:3000"
-module.exports = BASEURL;
+export default BASEURL = "http://13.204.69.174:3000"
