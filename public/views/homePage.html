@@ -108,7 +108,7 @@
     const reportsLink = document.getElementById("reportsLinkBtn");
     const limitSelect = document.getElementById("limit");
     const paginationUL = document.getElementById("paginationUL");
-
+    // Initialize variables
     let editingId = null;
     let token = localStorage.getItem("token");
     let currentPage = 1;
@@ -116,6 +116,12 @@
 
     // Set today's date by default
     dateInput.valueAsDate = new Date();
+
+    const API_BASE_URL = window.location.hostname === "localhost"
+  ? "http://localhost:3000"
+  : "http://13.204.69.174"; // 👈 your AWS IP
+
+  axios.defaults.baseURL = API_BASE_URL;
 
     function createExpenseRow(exp) {
       const tr = document.createElement("tr");
@@ -137,7 +143,7 @@
       currentLimit = limit;
 
       try {
-        const res = await axios.get(`http://localhost:3000/expense/getAllExpenses?page=${page}&limit=${limit}`, {
+        const res = await axios.get(`/expense/getAllExpenses?page=${page}&limit=${limit}`, {
           headers: { Authorization: token },
         });
 
@@ -186,8 +192,8 @@
 
       try {
         const url = editingId
-          ? `http://localhost:3000/expense/editExpense/${editingId}`
-          : "http://localhost:3000/expense/addExpense";
+          ? `/expense/editExpense/${editingId}`
+          : "/expense/addExpense";
         const payload = editingId
           ? { category, description, amount }
           : { category, description, amount, date };
@@ -211,7 +217,7 @@
       if (e.target.classList.contains("delete")) {
         if (confirm("Delete this expense?")) {
           try {
-            await axios.delete(`http://localhost:3000/expense/deleteExpense/${id}`, {
+            await axios.delete(`/expense/deleteExpense/${id}`, {
               headers: { Authorization: token },
             });
             getAllExpenses(currentPage, currentLimit);
@@ -234,7 +240,7 @@
 
     async function buyPremium() {
       try {
-        const res = await axios.get("http://localhost:3000/purchase/premiumMembership", {
+        const res = await axios.get("/purchase/premiumMembership", {
           headers: { Authorization: token },
         });
 
@@ -252,7 +258,7 @@
 
         if (result.paymentDetails) {
           await axios.post(
-            `http://localhost:3000/purchase/updateTransactionStatus/${orderId}`,
+            `/purchase/updateTransactionStatus/${orderId}`,
             {},
             { headers: { Authorization: token } }
           );
