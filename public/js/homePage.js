@@ -10,8 +10,7 @@ const leaderboardLink = document.getElementById("leaderboardLink");
 const reportsLink = document.getElementById("reportsLinkBtn");
 const limitSelect = document.getElementById("limit");
 const paginationUL = document.getElementById("paginationUL");
-let BASEURL = "http://13.204.69.174"
-
+// Initialize variables
 let editingId = null;
 let token = localStorage.getItem("token");
 let currentPage = 1;
@@ -19,6 +18,13 @@ let currentLimit = parseInt(limitSelect.value);
 
 // Set today's date by default
 dateInput.valueAsDate = new Date();
+
+const API_BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:3000"
+    : "http://13.204.69.174"; //  AWS IP
+
+axios.defaults.baseURL = API_BASE_URL;
 
 function createExpenseRow(exp) {
   const tr = document.createElement("tr");
@@ -35,21 +41,13 @@ function createExpenseRow(exp) {
   return tr;
 }
 
-function formatDateToDDMMYYYY(dateStr) {
-  const date = new Date(dateStr);
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = date.getFullYear();
-  return `${day}-${month}-${year}`;
-}
-
 async function getAllExpenses(page = 1, limit = 5) {
   currentPage = page;
   currentLimit = limit;
 
   try {
     const res = await axios.get(
-      `${BASEURL}/expense/getAllExpenses?page=${page}&limit=${limit}`,
+      `/expense/getAllExpenses?page=${page}&limit=${limit}`,
       {
         headers: { Authorization: token },
       }
@@ -91,22 +89,20 @@ form.addEventListener("submit", async (e) => {
   const category = categoryInput.value.trim();
   const description = descriptionInput.value.trim();
   const amount = amountInput.value.trim();
-  const rawDate = dateInput.value;
-  const formattedDate = formatDateToDDMMYYYY(rawDate);
-  
+  const date = dateInput.value;
+
   if (!category || !description || !amount || !date) {
     alert("Please fill all fields");
     return;
   }
-  
+
   try {
     const url = editingId
-    ? `${BASEURL}/expense/editExpense/${editingId}`
-    : `${BASEURL}/expense/addExpense`;
-    console.log("Formatted Date is "+formattedDate)
+      ? `/expense/editExpense/${editingId}`
+      : "/expense/addExpense";
     const payload = editingId
       ? { category, description, amount }
-      : { category, description, amount, date: formattedDate };
+      : { category, description, amount, date };
 
     await axios.post(url, payload, { headers: { Authorization: token } });
 
@@ -127,12 +123,9 @@ table.addEventListener("click", async (e) => {
   if (e.target.classList.contains("delete")) {
     if (confirm("Delete this expense?")) {
       try {
-        await axios.delete(
-          `${BASEURL}/expense/deleteExpense/${id}`,
-          {
-            headers: { Authorization: token },
-          }
-        );
+        await axios.delete(`/expense/deleteExpense/${id}`, {
+          headers: { Authorization: token },
+        });
         getAllExpenses(currentPage, currentLimit);
       } catch (err) {
         alert("Failed to delete expense");
@@ -153,12 +146,9 @@ buyPremiumBtn.addEventListener("click", buyPremium);
 
 async function buyPremium() {
   try {
-    const res = await axios.get(
-      `${BASEURL}/purchase/premiumMembership`,
-      {
-        headers: { Authorization: token },
-      }
-    );
+    const res = await axios.get("/purchase/premiumMembership", {
+      headers: { Authorization: token },
+    });
 
     if (res.data.isPremium) {
       alert(res.data.message);
@@ -174,7 +164,7 @@ async function buyPremium() {
 
     if (result.paymentDetails) {
       await axios.post(
-        `${BASEURL}/purchase/updateTransactionStatus/${orderId}`,
+        `/purchase/updateTransactionStatus/${orderId}`,
         {},
         { headers: { Authorization: token } }
       );
@@ -190,12 +180,12 @@ async function buyPremium() {
 
 leaderboardLink.addEventListener("click", (e) => {
   if (leaderboardLink.disabled) return;
-  window.location.href = `${BASEURL}/premium/getLeaderboardPage?token=${token}`;
+  window.location.href = `/premium/getLeaderboardPage?token=${token}`;
 });
 
 reportsLink.addEventListener("click", (e) => {
   if (reportsLink.disabled) return;
-  window.location.href = `${BASEURL}/reports/getReportsPage?token=${token}`;
+  window.location.href = `/reports/getReportsPage?token=${token}`;
 });
 
 limitSelect.addEventListener("change", () => {
@@ -204,7 +194,7 @@ limitSelect.addEventListener("change", () => {
 
 document.getElementById("logoutBtn").addEventListener("click", () => {
   localStorage.removeItem("token");
-  window.location.href = `${BASEURL}/`;
+  window.location.href = "/";
 });
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -214,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function checkPremiumStatus() {
   try {
-    const res = await axios.get(`${BASEURL}/user/isPremiumUser`, {
+    const res = await axios.get("/user/isPremiumUser", {
       headers: { Authorization: token },
     });
 

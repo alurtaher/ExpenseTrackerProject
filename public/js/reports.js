@@ -9,6 +9,12 @@ const tbodyMonthly = document.getElementById("tbodyMonthlyId");
 const tfootMonthly = document.getElementById("tfootMonthlyId");
 const dayDownloadBtn = document.getElementById("dayDownloadBtn");
 const monthDownloadBtn = document.getElementById("monthDownloadBtn");
+const API_BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:3000"
+    : "http://13.204.69.174"; //  AWS IP
+
+axios.defaults.baseURL = API_BASE_URL;
 
 document.getElementById("logoutBtn").addEventListener("click", () => {
   localStorage.removeItem("token");
@@ -26,7 +32,7 @@ async function getDailyReport(e) {
 
     let totalAmount = 0;
     const res = await axios.post(
-      "http://localhost:3000/reports/dailyReports",
+      "/reports/dailyReports",
       {
         date: formattedDate,
       },
@@ -96,7 +102,7 @@ async function getMonthlyReport(e) {
 
     let totalAmount = 0;
     const res = await axios.post(
-      "http://localhost:3000/reports/monthlyReports",
+      "/reports/monthlyReports",
       {
         month: formattedMonth,
       },
@@ -166,7 +172,7 @@ async function getDayFile(e) {
       .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
 
     const res = await axios.get(
-      `http://localhost:3000/reports/dailyReports/download?date=${formattedDate}`,
+      `/reports/dailyReports/download?date=${formattedDate}`,
       { headers: { Authorization: token } }
     );
 
@@ -194,7 +200,7 @@ async function getMonthFile(e) {
       .toString()
       .padStart(2, "0")}`;
     const res = await axios.get(
-      `http://localhost:3000/reports/monthlyReports/download?month=${formattedMonth}`,
+      `/reports/monthlyReports/download?month=${formattedMonth}`,
       { headers: { Authorization: token } }
     );
 
@@ -242,7 +248,7 @@ function populateDownloadsTable(files) {
 async function fetchDownloadedFiles() {
   try {
     const token = localStorage.getItem("token"); // or however you're storing it
-    const res = await axios.get("http://localhost:3000/reports/downloadedfiles", {
+    const res = await axios.get("/reports/downloadedfiles", {
       headers: { Authorization: token },
     });
 

@@ -4,6 +4,12 @@ const categoryBtn = document.querySelector("#categoryBtn");
 const tbody = document.getElementById("tbodyId");
 const reportsBtn = document.getElementById("reportsBtn")
 const token = localStorage.getItem("token")
+const API_BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:3000"
+    : "http://13.204.69.174"; //  AWS IP
+
+axios.defaults.baseURL = API_BASE_URL;
 
 categoryItems.forEach((item) => {
   item.addEventListener("click", (e) => {
@@ -15,7 +21,7 @@ categoryItems.forEach((item) => {
 
 async function getLeaderboard() {
   const token = localStorage.getItem("token")
-  const res = await axios.get("http://localhost:3000/premium/getLeaderboard",{ headers: { Authorization: token } });
+  const res = await axios.get("/premium/getLeaderboard",{ headers: { Authorization: token } });
   let position = 1;
   res.data.forEach((user) => {
     let name = user.name;

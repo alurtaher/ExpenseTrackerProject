@@ -1,9 +1,15 @@
 const resetPasswordLinkBtn = document.getElementById("resetPasswordLinkBtn");
+const API_BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:3000"
+    : "http://13.204.69.174"; //  AWS IP
+
+axios.defaults.baseURL = API_BASE_URL;
 
 async function sendMail() {
   try {
     const email = document.getElementById("email").value;
-    const res = await axios.post("http://localhost:3000/password/sendMail", {
+    const res = await axios.post("/password/sendMail", {
       email: email,
     });
     alert(res.data.message);
