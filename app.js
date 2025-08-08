@@ -23,6 +23,8 @@ const ResetPassword = require("./models/resetPasswordModel");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+const cors = require('cors');
+app.use(cors({ origin: '*' }));
 
 app.use("/", userRouter);
 app.use("/user", userRouter);

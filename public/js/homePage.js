@@ -190,12 +190,12 @@ async function buyPremium() {
 
 leaderboardLink.addEventListener("click", (e) => {
   if (leaderboardLink.disabled) return;
-  window.location.href = `/premium/getLeaderboardPage?token=${token}`;
+  window.location.href = `${BASEURL}/premium/getLeaderboardPage?token=${token}`;
 });
 
 reportsLink.addEventListener("click", (e) => {
   if (reportsLink.disabled) return;
-  window.location.href = `/reports/getReportsPage?token=${token}`;
+  window.location.href = `${BASEURL}/reports/getReportsPage?token=${token}`;
 });
 
 limitSelect.addEventListener("change", () => {
@@ -204,7 +204,7 @@ limitSelect.addEventListener("change", () => {
 
 document.getElementById("logoutBtn").addEventListener("click", () => {
   localStorage.removeItem("token");
-  window.location.href = "/";
+  window.location.href = `${BASEURL}/`;
 });
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -214,7 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function checkPremiumStatus() {
   try {
-    const res = await axios.get("/user/isPremiumUser", {
+    const res = await axios.get(`${BASEURL}/user/isPremiumUser`, {
       headers: { Authorization: token },
     });
 
