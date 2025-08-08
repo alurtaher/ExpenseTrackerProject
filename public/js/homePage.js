@@ -10,16 +10,12 @@ const leaderboardLink = document.getElementById("leaderboardLink");
 const reportsLink = document.getElementById("reportsLinkBtn");
 const limitSelect = document.getElementById("limit");
 const paginationUL = document.getElementById("paginationUL");
+let BASEURL = "http://13.204.69.174"
+
 let editingId = null;
 let token = localStorage.getItem("token");
 let currentPage = 1;
 let currentLimit = parseInt(limitSelect.value);
-const API_BASE_URL = window.location.hostname === "localhost"
-  ? "http://localhost:3000"
-  : "http://13.204.69.174"; // 👈 your AWS IP
-
-axios.defaults.baseURL = API_BASE_URL;
-
 
 // Set today's date by default
 dateInput.valueAsDate = new Date();
@@ -53,7 +49,7 @@ async function getAllExpenses(page = 1, limit = 5) {
 
   try {
     const res = await axios.get(
-      `/expense/getAllExpenses?page=${page}&limit=${limit}`,
+      `${BASEURL}/expense/getAllExpenses?page=${page}&limit=${limit}`,
       {
         headers: { Authorization: token },
       }
@@ -105,8 +101,8 @@ form.addEventListener("submit", async (e) => {
   
   try {
     const url = editingId
-    ? `/expense/editExpense/${editingId}`
-    : `/expense/addExpense`;
+    ? `${BASEURL}/expense/editExpense/${editingId}`
+    : `${BASEURL}/expense/addExpense`;
     console.log("Formatted Date is "+formattedDate)
     const payload = editingId
       ? { category, description, amount }
@@ -132,7 +128,7 @@ table.addEventListener("click", async (e) => {
     if (confirm("Delete this expense?")) {
       try {
         await axios.delete(
-          `/expense/deleteExpense/${id}`,
+          `${BASEURL}/expense/deleteExpense/${id}`,
           {
             headers: { Authorization: token },
           }
@@ -158,7 +154,7 @@ buyPremiumBtn.addEventListener("click", buyPremium);
 async function buyPremium() {
   try {
     const res = await axios.get(
-      "/purchase/premiumMembership",
+      `${BASEURL}/purchase/premiumMembership`,
       {
         headers: { Authorization: token },
       }
@@ -178,7 +174,7 @@ async function buyPremium() {
 
     if (result.paymentDetails) {
       await axios.post(
-        `/purchase/updateTransactionStatus/${orderId}`,
+        `${BASEURL}/purchase/updateTransactionStatus/${orderId}`,
         {},
         { headers: { Authorization: token } }
       );
