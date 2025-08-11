@@ -24,11 +24,10 @@ app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 const cors = require('cors');
-app.use(cors({ origin: '*' }));
+app.use(cors({ origin: '*' })); 
 
 app.use("/", userRouter);
 app.use("/user", userRouter);
-
 app.use("/homePage", expenseRouter);
 app.use("/expense", expenseRouter);
 app.use("/purchase", purchaseMembershipRouter);
