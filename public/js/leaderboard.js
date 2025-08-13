@@ -4,12 +4,12 @@ const categoryBtn = document.querySelector("#categoryBtn");
 const tbody = document.getElementById("tbodyId");
 const reportsBtn = document.getElementById("reportsBtn")
 const token = localStorage.getItem("token")
-const API_BASE_URL =
-  window.location.hostname === "localhost"
-    ? "http://localhost:3000"
-    : "http://3.109.211.67"; //  AWS IP
+// const API_BASE_URL =
+//   window.location.hostname === "localhost"
+//     ? "http://localhost:3000"
+//     : "http://3.109.211.67"; //  AWS IP
 
-axios.defaults.baseURL = API_BASE_URL;
+// axios.defaults.baseURL = API_BASE_URL;
 
 categoryItems.forEach((item) => {
   item.addEventListener("click", (e) => {

@@ -48,7 +48,7 @@ exports.createOrder = async ({
     return response.data.payment_session_id;
   } catch (error) {
     console.error(
-      "❌ Error Creating Order:",
+      "Error Creating Order:",
       error.response?.data || error.message
     );
     throw error;
@@ -71,7 +71,7 @@ exports.getPaymentStatus = async (orderId) => {
     return status;
   } catch (error) {
     console.error(
-      "❌ Error fetching order status:",
+      "Error fetching order status:",
       error.response?.data || error.message
     );
     throw error;
