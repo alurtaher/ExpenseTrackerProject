@@ -21,7 +21,7 @@ dateInput.valueAsDate = new Date();
 
 const API_BASE_URL =
   window.location.hostname === "localhost"
-    ? "http://localhost:3000"
+    ? "http://3.108.63.30"
     : "http://3.109.211.67"; //  AWS IP
 
 axios.defaults.baseURL = API_BASE_URL;

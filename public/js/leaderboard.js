@@ -7,7 +7,7 @@ const token = localStorage.getItem("token")
 // const API_BASE_URL =
 //   window.location.hostname === "localhost"
 //     ? "http://localhost:3000"
-//     : "http://3.109.211.67"; //  AWS IP
+//     : "http://3.108.63.30/"; //  AWS IP
 
 // axios.defaults.baseURL = API_BASE_URL;
 
