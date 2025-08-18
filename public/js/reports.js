@@ -12,7 +12,7 @@ const monthDownloadBtn = document.getElementById("monthDownloadBtn");
 const API_BASE_URL =
   window.location.hostname === "localhost"
     ? "http://localhost:3000"
-    : "http://3.108.63.30"; //  AWS IP
+    : "http://52.66.252.18"; //  AWS IP
 
 axios.defaults.baseURL = API_BASE_URL;
 
