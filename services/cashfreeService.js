@@ -3,11 +3,11 @@ const { Cashfree, CFEnvironment } = require("cashfree-pg");
 // Initialize Cashfree SDK in SANDBOX mode
 const cashfree = new Cashfree(
   CFEnvironment.SANDBOX,
-  "TEST430329ae80e0f32e41a393d78b923034", // ✅ Replace with your actual credentials in PROD
+  "TEST430329ae80e0f32e41a393d78b923034", // Need to Replace with our actual credentials in PRODUCTION
   "TESTaf195616268bd6202eeb3bf8dc458956e7192a85"
 );
 
-// ✅ Create Order Function
+// Create Order Function
 exports.createOrder = async ({
   orderId,
   orderAmount,
@@ -30,7 +30,7 @@ exports.createOrder = async ({
       customer_details: {
         customer_id: userId.toString(),
         customer_phone: customerPhone.toString(),
-        customer_email: "test@example.com", // ✅ Required in SANDBOX
+        customer_email: "test@example.com", // Required in SANDBOX
       },
 
       order_meta: {
@@ -55,7 +55,7 @@ exports.createOrder = async ({
   }
 };
 
-// ✅ Get Payment Status Function
+// Get Payment Status Function
 exports.getPaymentStatus = async (orderId) => {
   try {
     const response = await cashfree.PGOrderFetchPayments(orderId.toString());

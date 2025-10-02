@@ -1,11 +1,8 @@
-const { Op } = require("sequelize");
 const Expense = require("../models/expenseModel");
 
 const getDataForToday = async (date, userId) => {
   try {
-    const expenses = await Expense.findAll({
-      where: { date: date, userId: userId },
-    });
+    const expenses = await Expense.find({ date: date, userId: userId });
     return expenses;
   } catch (error) {
     return "Data not Valid";
@@ -14,15 +11,11 @@ const getDataForToday = async (date, userId) => {
 
 const getDataForMonth = async (month, userId) => {
   try {
-    const expenses = await Expense.findAll({
-      where: {
-        date: {
-          [Op.like]: `%-${month}-%`,
-        },
-        userId: userId,
-      },
-      raw: true,
-    });
+    const regex = new RegExp(`-${month}-`);
+    const expenses = await Expense.find({
+      date: { $regex: regex },
+      userId: userId,
+    }).lean();
     return expenses;
   } catch (error) {
     return "Data not Valid";
@@ -31,5 +24,5 @@ const getDataForMonth = async (month, userId) => {
 
 module.exports = {
   getDataForToday,
-  getDataForMonth
+  getDataForMonth,
 };

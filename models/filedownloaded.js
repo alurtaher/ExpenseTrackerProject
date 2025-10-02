@@ -1,24 +1,20 @@
-const Sequelize = require("sequelize");
-const sequelize = require("../utils/database");
-const User = require('../models/userModel.js')
-const FileDownloaded = sequelize.define("fileDownloaded", {
+const mongoose = require('mongoose');
+
+const fileDownloadedSchema = new mongoose.Schema({
   userId: {
-    type: Sequelize.INTEGER,
-    allowNull: false,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
   },
   filedownloadurl: {
-    type: Sequelize.STRING,
-    allowNull: false,
+    type: String,
+    required: true,
   },
-});
+}, { timestamps: true });
 
-User.hasMany(FileDownloaded, {
-  foreignKey: 'userId',
-  onDelete: 'CASCADE',
-});
-FileDownloaded.belongsTo(User, {
-  foreignKey: 'userId',
-  onDelete: 'CASCADE',
-});
+// Cascade delete behavior is not automatic in MongoDB.
+// To approximate Sequelize's onDelete 'CASCADE', implement middleware on User model for cleanup.
 
-module.exports= FileDownloaded;
+const FileDownloaded = mongoose.model('FileDownloaded', fileDownloadedSchema);
+
+module.exports = FileDownloaded;

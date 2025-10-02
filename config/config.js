@@ -2,36 +2,24 @@ require('dotenv').config();
 
 module.exports = {
   development: {
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    host: process.env.PROD_DB_HOSTNAME,
-    port: process.env.PROD_DB_PORT,
-    dialect: 'mysql',
-    dialectOptions: {
-      bigNumberStrings: true,
+    mongoURI: process.env.MONGO_DEV_URI, // e.g. mongodb://username:password@localhost:27017/expense_tracker_dev
+    options: {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
     },
   },
   test: {
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    host: process.env.PROD_DB_HOSTNAME,
-    port: process.env.PROD_DB_PORT,
-    dialect: 'mysql',
-    dialectOptions: {
-      bigNumberStrings: true,
+    mongoURI: process.env.MONGO_TEST_URI,
+    options: {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
     },
   },
   production: {
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    host: process.env.PROD_DB_HOSTNAME,
-    port: process.env.PROD_DB_PORT,
-    dialect: 'mysql',
-    dialectOptions: {
-      bigNumberStrings: true
+    mongoURI: process.env.MONGO_PROD_URI,
+    options: {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
     },
   },
 };

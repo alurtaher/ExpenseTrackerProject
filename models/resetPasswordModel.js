@@ -1,13 +1,19 @@
-const Sequelize = require("sequelize");
-const sequelize = require("../utils/database");
+const mongoose = require('mongoose');
 
-const ResetPassword = sequelize.define("ResetPassword", {
-  id: {
-    type: Sequelize.STRING,
-    primaryKey: true,
-    allowNull: false,
+const resetPasswordSchema = new mongoose.Schema({
+  _id: {
+    type: String,
+    required: true,
   },
-  isActive: Sequelize.BOOLEAN,
+  isActive: {
+    type: Boolean,
+    required: false,
+  },
+}, {
+  timestamps: true,
+  _id: false,  // disable default ObjectId _id since you provide string _id
 });
+
+const ResetPassword = mongoose.model('ResetPassword', resetPasswordSchema);
 
 module.exports = ResetPassword;

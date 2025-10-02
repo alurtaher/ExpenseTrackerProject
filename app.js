@@ -1,13 +1,14 @@
 const express = require("express");
 const app = express();
-console.log("hello Testing CI CD")
-
 const bodyParser = require("body-parser");
-
 const dotenv = require("dotenv");
 dotenv.config();
 
-const sequelize = require("./utils/database");
+require("./utils/database"); // Connecting mongoose here
+
+// app.get('/',(req,res)=>{
+//   res.send("hello from the server")
+// })
 
 const userRouter = require("./router/userRouter");
 const expenseRouter = require("./router/expenseRouter");
@@ -16,16 +17,12 @@ const leaderboardRouter = require("./router/leaderboardRouter");
 const resetPasswordRouter = require("./router/resetPasswordRouter");
 const reportsRouter = require("./router/reportsRouter");
 
-const User = require("./models/userModel");
-const Filedownloaded = require('./models/filedownloaded')
-const Expense = require("./models/expenseModel");
-const Order = require("./models/ordersModel");
-const ResetPassword = require("./models/resetPasswordModel");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
 const cors = require('cors');
-app.use(cors({ origin: '*' })); 
+app.use(cors({ origin: '*' }));
 
 app.use("/", userRouter);
 app.use("/user", userRouter);
@@ -36,27 +33,9 @@ app.use("/premium", leaderboardRouter);
 app.use("/password", resetPasswordRouter);
 app.use("/reports", reportsRouter);
 
-User.hasMany(Expense);
-Expense.belongsTo(User);
+// No Sequelize sync or association setup needed here with Mongoose
 
-User.hasMany(Order);
-Order.belongsTo(User);
-
-User.hasMany(Filedownloaded, {
-  foreignKey: 'userId',
-  onDelete: 'CASCADE',
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is listening on ${PORT}.....`);
 });
-Filedownloaded.belongsTo(User, {
-  foreignKey: 'userId',
-  onDelete: 'CASCADE',
-});
-
-ResetPassword.belongsTo(User);
-User.hasMany(ResetPassword);
-
-sequelize
-  .sync({force:false})
-  .then((result) => {
-    app.listen(3000);
-  })
-  .catch((err) => console.log(err));

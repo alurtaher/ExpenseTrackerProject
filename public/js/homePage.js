@@ -26,6 +26,9 @@ const API_BASE_URL =
 
 axios.defaults.baseURL = API_BASE_URL;
 
+// const API_BASE_URL = "http://localhost:3000"
+// axios.defaults.baseURL = API_BASE_URL;
+
 function createExpenseRow(exp) {
   const tr = document.createElement("tr");
   tr.innerHTML = `

@@ -2,19 +2,24 @@ const path = require("path");
 const dataService = require("../services/getDataForDay");
 const AWS = require("aws-sdk");
 const FileDownloaded = require("../models/filedownloaded");
+const User = require("../models/userModel");
+const Expense = require("../models/expenseModel");
 
+// Serve the reports page
 const getReportsPage = (req, res, next) => {
-  res.sendFile(path.join(__dirname, "../", "public", "views", "reports.html"));
+  res.sendFile(
+    path.join(__dirname, "../", "public", "views", "reports.html")
+  );
 };
 
+// Upload data to S3
 function uploadToS3(data, fileName) {
-
   let s3Bucket = new AWS.S3({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   });
 
-  var params = {
+  const params = {
     Bucket: process.env.BUCKET_NAME,
     Key: fileName,
     Body: data,
@@ -31,10 +36,11 @@ function uploadToS3(data, fileName) {
   });
 }
 
-const dailyReports = async (req, res, next) => {
+// Generate daily report
+const dailyReports = async (req, res) => {
   try {
     const date = req.body.date;
-    const expenses = await dataService.getDataForToday(date, req.user.id);
+    const expenses = await dataService.getDataForToday(date, req.user._id);
     return res.status(200).json({ expenses, success: true });
   } catch (error) {
     console.log(error);
@@ -42,6 +48,7 @@ const dailyReports = async (req, res, next) => {
   }
 };
 
+// Generate monthly report
 const monthlyReports = async (req, res) => {
   try {
     const month = req.body.month || req.query.month;
@@ -50,7 +57,7 @@ const monthlyReports = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Month and year are required" });
     }
-    const expenses = await dataService.getDataForMonth(month, req.user.id);
+    const expenses = await dataService.getDataForMonth(month, req.user._id);
     return res.status(200).json({ success: true, expenses });
   } catch (error) {
     console.log(error);
@@ -58,24 +65,23 @@ const monthlyReports = async (req, res) => {
   }
 };
 
+// Download daily expenses file
 const downloadDailyReports = async (req, res) => {
   try {
     const date = req.query.date;
-    const userId = req.user.id;
-    console.log("Date is" + date);
+    const userId = req.user._id;
     if (!date || !userId) {
       return res
         .status(400)
-        .json({ message: "required Date ", success: false });
+        .json({ message: "required Date", success: false });
     }
 
-    const expenses = await dataService.getDataForToday(date, req.user.id);
+    const expenses = await dataService.getDataForToday(date, req.user._id);
     const stringifyExpenses = JSON.stringify(expenses);
     const fileName = `Expense${userId}/${new Date()}.txt`;
-
     const fileUrl = await uploadToS3(stringifyExpenses, fileName);
 
-    //Save to filedownloaded table
+    // Save to filedownloaded collection
     await FileDownloaded.create({
       userId,
       filedownloadurl: fileUrl,
@@ -87,10 +93,11 @@ const downloadDailyReports = async (req, res) => {
   }
 };
 
+// Download monthly expenses file
 const downloadMonthlyReports = async (req, res) => {
   try {
     const month = req.body.month || req.query.month;
-    const userId = req.user.id;
+    const userId = req.user._id;
     if (!month) {
       return res
         .status(400)
@@ -113,12 +120,12 @@ const downloadMonthlyReports = async (req, res) => {
   }
 };
 
+// Fetch list of downloaded files
 const downloadFiles = async (req, res) => {
   try {
-    const files = await FileDownloaded.findAll({
-      where: { userId: req.user.id },
-      order: [["createdAt", "DESC"]], // <-- Show latest first
-    });
+    const files = await FileDownloaded.find({ userId: req.user._id })
+      .sort({ createdAt: -1 })
+      .exec();
 
     return res.status(200).json({ success: true, files });
   } catch (error) {

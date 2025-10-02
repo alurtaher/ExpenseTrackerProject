@@ -5,7 +5,9 @@ const signUpBtn = document.getElementById("signUpBtn");
 const loginBtn = document.getElementById("loginBtn");
 const loginEmail = document.getElementById("loginEmail");
 const loginPassword = document.getElementById("loginPassword");
-let BASEURL = "http://52.66.252.18"
+// let BASEURL = "http://52.66.252.18"
+const BASEURL = "http://localhost:3000"
+axios.defaults.baseURL = BASEURL;
 
 signUp.addEventListener("click", () => {
   container.classList.add("right-panel-active");

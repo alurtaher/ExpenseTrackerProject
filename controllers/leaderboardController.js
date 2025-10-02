@@ -1,7 +1,5 @@
 const path = require("path");
 const User = require("../models/userModel");
-const Expense = require("../models/expenseModel");
-const sequelize = require("../utils/database");
 
 exports.getLeaderboardPage = (req, res, next) => {
   res.sendFile(
@@ -9,21 +7,20 @@ exports.getLeaderboardPage = (req, res, next) => {
   );
 };
 
-exports.getLeaderboard = async(req, res) => {
+exports.getLeaderboard = async (req, res) => {
   try {
-    const users = await User.findAll({
-      attributes: ["name", "totalExpenses"],
-      order: [["totalExpenses", "DESC"]],
-    });
+    const users = await User.find({}, { name: 1, totalExpenses: 1 })
+      .sort({ totalExpenses: -1 })
+      .lean();
 
     const result = users.map(user => ({
       name: user.name,
       amount: user.totalExpenses,
     }));
 
-    res.json(result); // sends JSON response
+    res.json(result);
   } catch (err) {
     console.error("Error fetching leaderboard:", err);
     res.status(500).json({ message: "Server Error" });
-  }  
+  }
 };

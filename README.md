@@ -57,7 +57,7 @@ Database (MySQL on AWS RDS)
 
 1. **Clone the repository**  
    
-   git clone https://github.com/your-username/ExpenseTrackerProject.git
+   git clone https://github.com//ExpenseTrackerProject.git
    cd ExpenseTrackerProject
 
 2. **Install dependencies**

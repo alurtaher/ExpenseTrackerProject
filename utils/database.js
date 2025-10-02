@@ -1,14 +1,18 @@
-const Sequelize = require("sequelize");
-require("dotenv").config();
-const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USERNAME,
-  process.env.DB_PASSWORD,
-  {
-    dialect: "mysql",
-    host: process.env.PROD_DB_HOSTNAME || "localhost",
-    port: process.env.PROD_DB_PORT || 3306,
-  }
-);
+const mongoose = require('mongoose');
+require('dotenv').config();
 
-module.exports = sequelize;
+const mongoURI = process.env.MONGO_DEV_URI || 'mongodb://localhost:27017/expense_tracker';
+
+const options = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+};
+
+mongoose.connect(mongoURI, options);
+
+const db = mongoose.connection;
+
+db.on('error', (error) => console.error('MongoDB connection error:', error));
+db.once('open', () => console.log('MongoDB connected successfully'));
+
+module.exports = db;
