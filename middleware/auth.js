@@ -5,7 +5,7 @@ require('dotenv').config();
 const authenticate = async (req, res, next) => {
   try {
     const token = req.header('Authorization');
-    console.log('Received token:', token);
+    // console.log('Received token:', token);
 
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
 

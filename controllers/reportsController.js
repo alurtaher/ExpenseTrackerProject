@@ -2,8 +2,6 @@ const path = require("path");
 const dataService = require("../services/getDataForDay");
 const AWS = require("aws-sdk");
 const FileDownloaded = require("../models/filedownloaded");
-const User = require("../models/userModel");
-const Expense = require("../models/expenseModel");
 
 // Serve the reports page
 const getReportsPage = (req, res, next) => {
@@ -89,6 +87,7 @@ const downloadDailyReports = async (req, res) => {
 
     return res.status(200).json({ fileUrl, success: true });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ err: error, fileUrl: "", success: false });
   }
 };
