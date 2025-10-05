@@ -1,17 +1,10 @@
+
 # 💸 Expense Tracker Web Application  
 
 A full-stack web app to track daily expenses, categorize spending, and analyze reports.  
-It includes authentication, premium features with payment integration, and AWS cloud deployment.  
+It includes authentication, premium features with payment integration, and AWS cloud deployment.
 
----
-
-## 🎥 Demo  
-
-👉 [Watch the demo video](https://www.loom.com/share/4745dbbb9ba64453813ddbc338f33bc6?sid=5fbd1ec2-488e-4434-ac9c-294e3a4ed852)  
-  
----
-
-## ✨ Features  
+## Features
 
 - 🔐 **Authentication** – Signup, Login, and Password Reset (JWT secured)  
 - 💰 **Expense Management** – Add, Edit, Delete expenses with category & date  
@@ -20,69 +13,68 @@ It includes authentication, premium features with payment integration, and AWS c
 - 🌟 **Premium Features** – Leaderboard & advanced reports (via Cashfree payment)  
 - 📱 **Responsive UI** – Works seamlessly on desktop & mobile  
 
----
 
-## 🔧 Tech Stack  
+## Installation
+
+Install my-project with github
+
+```bash
+git clone https://github.com/ExpenseTrackerProject.git
+
+cd ExpenseTrackerProject
+
+npm install
+```
+    
+## Tech Stack
+
 
 - **Frontend:** Bootstrap, Vanilla JavaScript, Axios  
 - **Backend:** Node.js, Express.js, Sequelize (ORM)  
-- **Database:** MySQL (via Sequelize), AWS RDS  
+- **Database:** MongoDB (via Mongoose), AWS RDS  
 - **Authentication:** JWT (JSON Web Token)  
 - **Deployment:** AWS EC2 (server), PM2, Nginx  
 - **Cloud Services:**  
   - **AWS S3** – Static asset storage (screenshots, frontend files)  
-  - **AWS RDS** – Managed MySQL database  
+  - **Mongodb Atlas** – Managed mongodb database  
   - **AWS IAM** – Role-based secure access  
   - **AWS Billing & Management Console** – Cost monitoring & resource management  
 - **Payment Integration:** Cashfree for premium subscriptions  
 
----
+## Environment Variables
 
-## 🏗 Project Architecture  
+To run this project, you will need to add the following environment variables to your .env file
 
-User
-↓
-Frontend (Bootstrap + JS)
-↓
-Backend (Node.js + Express + Sequelize)
-↓
-Database (MySQL on AWS RDS)
-    -->AWS S3 – Static files
-    -->Cashfree – Premium payments
-    -->AWS EC2 + Nginx + PM2 – Deployment
+`MONGO_DEV_URI`
 
----
+`MONGO_TEST_URI`
 
-## ⚙️ Installation & Setup  
+`MONGO_TEST_URI`
 
-1. **Clone the repository**  
-   
-   git clone https://github.com//ExpenseTrackerProject.git
-   cd ExpenseTrackerProject
+`RESET_PASSWORD_API_KEY`
 
-2. **Install dependencies**
+`SENDER_EMAIL`
 
-    npm install
+`SECRET_KEY
+`
+`AWS_ACCESS_KEY_ID`
 
+`AWS_SECRET_ACCESS_KEY`            
 
-3.**Setup environment variables (.env)**
+ `BUCKET_NAME`
+## Screenshots
 
-RESET_PASSWORD_API_KEY
-DB_USERNAME=your_db_name
-DB_PASSWORD=your_db_password
-DB_NAME=your_db_user
-SENDER_EMAIL
-SECRET_KEY
-AWS_ACCESS_KEY_ID
-AWS_SECRET_ACCESS_KEY
-BUCKET_NAME
+![App Screenshot](https://github.com/alurtaher/photo/blob/master/Screenshot%202025-10-05%20202946.png?raw=true)
 
+![App Screenshot](https://github.com/alurtaher/photo/blob/master/Screenshot%202025-10-05%20203300.png?raw=true)
 
-4.**Run database migrations**
+![App Screenshot](https://github.com/alurtaher/photo/blob/master/Screenshot%202025-10-05%20203509.png?raw=true)
 
-npx sequelize db:migrate
+![App Screenshot](https://github.com/alurtaher/photo/blob/master/Screenshot%202025-10-05%20203800.png?raw=true)
+## Authors
 
+[![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/alur-taher-basha-857937233/)
+## Other Common Github Profile Sections
+👩‍💻 I'm currently working on a Backend project
 
-5.**Start the application**
-
-node app.js
+🧠 I'm exploring backend technologies in depth
