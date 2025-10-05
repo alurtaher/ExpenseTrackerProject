@@ -4,8 +4,13 @@ require('dotenv').config();
 
 const authenticate = async (req, res, next) => {
   try {
-    const token = req.header('Authorization');
-    // console.log('Received token:', token);
+    const authHeader = req.header('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer')) {
+      return res.status(401).json({ success: false, message: 'Authorization token missing or malformed' });
+    }
+
+    // Extract token after 'Bearer '
+    const token = authHeader.split(' ')[1];
 
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
 

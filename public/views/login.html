@@ -6,6 +6,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login or Sign Up</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,800&display=swap" rel="stylesheet" />
+
+  <!-- Custom CSS -->
   <link rel="stylesheet" href="../css/login.css" />
 </head>
 
@@ -16,7 +21,7 @@
     <!-- Sign Up Form -->
     <div class="form-container sign-up-container">
       <form action="/user/signUp" method="POST">
-        <h1>Create Account </h1>
+        <h1>Create Account</h1>
         <span>Fill your credentials here</span>
         <input type="text" placeholder="Name" name="name" required />
         <input type="email" placeholder="Email" name="email" required />
@@ -53,12 +58,16 @@
       </div>
     </div>
   </div>
+
+  <!-- Axios CDN -->
   <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.2/axios.min.js"
-      integrity="sha512-QTnb9BQkG4fBYIt9JGvYmxPpd6TBeKp6lsUrtiVQsrJ9sb33Bn9s0wMQO9qVBFbPX3xHRAsBHvXlcsrnJjExjg=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-      ></script>
+    src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.2/axios.min.js"
+    integrity="sha512-QTnb9BQkG4fBYIt9JGvYmxPpd6TBeKp6lsUrtiVQsrJ9sb33Bn9s0wMQO9qVBFbPX3xHRAsBHvXlcsrnJjExjg=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+
+  <!-- Custom JS -->
   <script src="../js/login.js"></script>
 </body>
 

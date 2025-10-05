@@ -10,24 +10,32 @@ const leaderboardLink = document.getElementById("leaderboardLink");
 const reportsLink = document.getElementById("reportsLinkBtn");
 const limitSelect = document.getElementById("limit");
 const paginationUL = document.getElementById("paginationUL");
-// Initialize variables
+const premiumStatus = document.getElementById("premiumStatus");
+
 let editingId = null;
 let token = localStorage.getItem("token");
 let currentPage = 1;
 let currentLimit = parseInt(limitSelect.value);
+let isPremium = false;
 
-// Set today's date by default
 dateInput.valueAsDate = new Date();
 
 const API_BASE_URL =
   window.location.hostname === "localhost"
     ? "http://localhost:3000"
-    : "http://52.66.252.18"; //  AWS IP
+    : "http://52.66.252.18";
 
 axios.defaults.baseURL = API_BASE_URL;
 
-// const API_BASE_URL = "http://localhost:3000"
-// axios.defaults.baseURL = API_BASE_URL;
+window.addEventListener("DOMContentLoaded", () => {
+  if (!token) {
+    window.location.href = "/";
+  }
+});
+
+document.getElementById('homeBtn').addEventListener('click', () => {
+  window.location.href = '/homePage';
+});
 
 function createExpenseRow(exp) {
   const tr = document.createElement("tr");
@@ -39,7 +47,7 @@ function createExpenseRow(exp) {
         <td>
           <button class="btn btn-sm btn-danger delete">Delete</button>
           <button class="btn btn-sm btn-secondary edit">Edit</button>
-          <input type="hidden" value="${exp.id}">
+          <input type="hidden" value="${exp._id}">
         </td>`;
   return tr;
 }
@@ -51,9 +59,7 @@ async function getAllExpenses(page = 1, limit = 5) {
   try {
     const res = await axios.get(
       `/expense/getAllExpenses?page=${page}&limit=${limit}`,
-      {
-        headers: { Authorization: token },
-      }
+      { headers: { Authorization: `Bearer ${token}` } }
     );
 
     table.innerHTML = "";
@@ -67,7 +73,6 @@ async function getAllExpenses(page = 1, limit = 5) {
       table.appendChild(tr);
     });
 
-    // Pagination
     paginationUL.innerHTML = "";
     for (let i = 1; i <= res.data.totalPages; i++) {
       const li = document.createElement("li");
@@ -82,13 +87,11 @@ async function getAllExpenses(page = 1, limit = 5) {
     }
   } catch (err) {
     console.error("Failed to fetch expenses", err);
-    alert("Unable to load expenses.");
   }
 }
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-
   const category = categoryInput.value.trim();
   const description = descriptionInput.value.trim();
   const amount = amountInput.value.trim();
@@ -107,7 +110,9 @@ form.addEventListener("submit", async (e) => {
       ? { category, description, amount }
       : { category, description, amount, date };
 
-    await axios.post(url, payload, { headers: { Authorization: token } });
+    await axios.post(url, payload, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
     editingId = null;
     submitBtn.textContent = "Add Expense";
@@ -115,6 +120,7 @@ form.addEventListener("submit", async (e) => {
     dateInput.valueAsDate = new Date();
     getAllExpenses(currentPage, currentLimit);
   } catch (err) {
+    console.error("Error saving expense", err);
     alert("Error saving expense");
   }
 });
@@ -127,7 +133,7 @@ table.addEventListener("click", async (e) => {
     if (confirm("Delete this expense?")) {
       try {
         await axios.delete(`/expense/deleteExpense/${id}`, {
-          headers: { Authorization: token },
+          headers: { Authorization: `Bearer ${token}` },
         });
         getAllExpenses(currentPage, currentLimit);
       } catch (err) {
@@ -150,7 +156,7 @@ buyPremiumBtn.addEventListener("click", buyPremium);
 async function buyPremium() {
   try {
     const res = await axios.get("/purchase/premiumMembership", {
-      headers: { Authorization: token },
+      headers: { Authorization: `Bearer ${token}` },
     });
 
     if (res.data.isPremium) {
@@ -169,7 +175,7 @@ async function buyPremium() {
       await axios.post(
         `/purchase/updateTransactionStatus/${orderId}`,
         {},
-        { headers: { Authorization: token } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       alert("Payment successful! You are now a premium member.");
@@ -181,14 +187,20 @@ async function buyPremium() {
   }
 }
 
-leaderboardLink.addEventListener("click", (e) => {
-  if (leaderboardLink.disabled) return;
-  window.location.href = `/premium/getLeaderboardPage?token=${token}`;
+leaderboardLink.addEventListener("click", () => {
+  if (!isPremium) {
+    alert("You are not a premium user. Upgrade to access Leaderboard!");
+  } else {
+    window.location.href = `/premium/getLeaderboardPage?token=${token}`;
+  }
 });
 
-reportsLink.addEventListener("click", (e) => {
-  if (reportsLink.disabled) return;
-  window.location.href = `/reports/getReportsPage?token=${token}`;
+reportsLink.addEventListener("click", () => {
+  if (!isPremium) {
+    alert("You are not a premium user. Upgrade to access Reports!");
+  } else {
+    window.location.href = `/reports/getReportsPage?token=${token}`;
+  }
 });
 
 limitSelect.addEventListener("change", () => {
@@ -208,32 +220,17 @@ document.addEventListener("DOMContentLoaded", () => {
 async function checkPremiumStatus() {
   try {
     const res = await axios.get("/user/isPremiumUser", {
-      headers: { Authorization: token },
+      headers: { Authorization: `Bearer ${token}` },
     });
 
-    const isPremium = res.data.isPremiumUser;
+    isPremium = res.data.isPremiumUser;
 
     if (isPremium) {
-      buyPremiumBtn.textContent = "You are a Premium User";
-      buyPremiumBtn.disabled = true;
+      buyPremiumBtn.textContent = "Premium Active";
+      // buyPremiumBtn.disabled = true;
       buyPremiumBtn.classList.replace("btn-success", "btn-secondary");
-    } else {
-      leaderboardLink.disabled = true;
-      reportsLink.disabled = true;
-      leaderboardLink.classList.add("btn-secondary");
-      reportsLink.classList.add("btn-secondary");
-      leaderboardLink.title = "Only premium users can access Leaderboard";
-      reportsLink.title = "Only premium users can access Reports";
-
-      leaderboardLink.addEventListener("click", (e) => {
-        e.preventDefault();
-        alert("Access Denied: Premium users only");
-      });
-
-      reportsLink.addEventListener("click", (e) => {
-        e.preventDefault();
-        alert("Access Denied: Premium users only");
-      });
+      premiumStatus.innerHTML =
+        '<span class="premium-badge">You are a Premium User</span>';
     }
   } catch (err) {
     console.error("Error checking premium status", err);

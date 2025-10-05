@@ -9,6 +9,11 @@ const resetPasswordSchema = new mongoose.Schema({
     type: Boolean,
     required: false,
   },
+  userId: {
+    type:mongoose.Schema.Types.ObjectId ,
+    ref: 'User',
+    required: true,
+  }
 }, {
   timestamps: true,
   _id: false,  // disable default ObjectId _id since you provide string _id
